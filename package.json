@@ -1,0 +1,12 @@
+{
+  "name": "spin-the-bottle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "author": "Bin",
+  "dependencies": {
+    "discord.io": "https://github.com/FileStream/discord.io",
+    "winston": "^2.4.0",
+    "mongodb": "^3.0.4"
+  }
+}

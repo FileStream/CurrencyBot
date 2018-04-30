@@ -1,1 +1,1 @@
-# PointBot
+# bottle-bot
