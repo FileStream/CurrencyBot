@@ -4,6 +4,7 @@ var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var isDeaf = false;
 var pageHolder = [];
+var lastMsg;
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -87,8 +88,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             case 'help':
                 //help info
                 var helpInfo = [
-                    ['b!help [<page #>]', 'Makes this panel open, put in a specific page as an optional parameter'],
-                    ['b!ping', "Lets you test how fast the bot's server can respond to you without imploding"]
+                    ['p!help [<page #>]', 'Makes this panel open, put in a specific page as an optional parameter'],
+                    ['p!ping', "Lets you test how fast the bot's server can respond to you without imploding"]
                 ];
 
                 if (args[1] == null) {
@@ -115,7 +116,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                             "color": Math.floor(Math.random() * 16777215) + 1,
                             "description": pageHolder[0],
                             "footer": {
-                                "text": "Page 1/" + (pageHolder.length - 1) + ', use "b!help <page #>" to switch pages'
+                                "text": "Page 1/" + (pageHolder.length - 1) + ', use "p!help <page #>" to switch pages'
                             }
                         }
                     }, (err, res) => lastMsg = res.id);
@@ -128,7 +129,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                                 "color": Math.floor(Math.random() * 16777215) + 1,
                                 "description": pageHolder[(args[1] - 1)],
                                 "footer": {
-                                    "text": "Page " + args[1] + "/" + (pageHolder.length - 1) + ', use "b!help <page #>" to switch pages'
+                                    "text": "Page " + args[1] + "/" + (pageHolder.length - 1) + ', use "p!help <page #>" to switch pages'
                                 }
                             }
                         });
