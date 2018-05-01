@@ -99,7 +99,7 @@ bot.on('ready', function(evt) {
     let now = new Date();
     now = now.getTime();
     for (var u of Object.values(userData)) {
-     for (var times of u.expireTimes) {
+     for (var times in u.expireTimes) {
       if ((times['date']+(items[times['item']].expireTime*60000))<now)
         u.purchasedItems.splice(u.purchasedItems.indexOf(times['item']),0);
      }
