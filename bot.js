@@ -50,6 +50,7 @@ function pointDB(reading) {
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
+                userData[r.id].expireTimes = r.expireTimes.split(',');
               }
         });
         } else {
@@ -57,10 +58,12 @@ function pointDB(reading) {
                 if (err) {}
             });
           for (var v of Object.keys(userData)) {
-              collection.insert({
+            console.log(Object.values(userData[v].expireTimes).toString());  
+            collection.insert({
                id: v,
                points: userData[v].points,
-                purchasedItems: userData[v].purchasedItems.toString()
+                purchasedItems: userData[v].purchasedItems.toString(),
+                expireTimes: Object.values(userData[v].expireTimes).toString()
               });
                }
         }
@@ -76,7 +79,8 @@ bot.on('ready', function(evt) {
         for (var u in bot.users) {
          userData[u] = {
           points:0,   
-          purchasedItems: []   
+          purchasedItems: [],
+          expireTimes: {}
          }
         }
     pointDB(true);
@@ -90,6 +94,16 @@ bot.on('ready', function(evt) {
    pointDB(false);
       console.log("Data sent.");  
   },900000);
+  setInterval(()=>{
+    let now = new Date();
+    now = now.getTime();
+    for (var u of Object.values(userData)) {
+     for (var times of u.expireTimes) {
+      if ((times['date']+(items[times['item']].expireTime*60000))<now)
+        u.purchasedItems.splice(u.purchasedItems.indexOf(times['item']),0);
+     }
+    }
+  },60000);
 });
 
 bot.on('connect', function(evt) {
@@ -231,6 +245,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     }, console.log);
                 }
                 break;
+          case 'backup':
+            if (userID!='175711685682659328') break; 
+            pointDB(false);
+            bot.sendMessage({to:channelID,message:"Sent data to database."});
+            break;
           case 'points':
             bot.sendMessage({
               to:channelID,
@@ -266,6 +285,9 @@ bot.on('message', function(user, userID, channelID, message, evt) {
              if (userData[userID].points > Object.values(items)[args[1]-1].price) {
                subPoint(userID,Object.values(items)[args[1]-1].price);
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
+               let now = new Date();
+               now = now.getTime();
+               userData[userID].expireTimes.push({'item':Object.keys(items)[args[1]-1],'date':now});
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
               else bot.sendMessage({to:channelID,message:"You need " + (Object.values(items)[args[1]-1].price-userData[userID].points) + " more points to buy that item"});
