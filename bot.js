@@ -79,13 +79,17 @@ bot.on('ready', function(evt) {
           purchasedItems: []   
          }
         }
-  console.log(userData);
     pointDB(true);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
         }
     }, console.log);
+  setInterval(()=>{
+    console.log("Sending userdata to database");
+   pointDB(false);
+      console.log("Data sent.");  
+  },900000);
 });
 
 bot.on('connect', function(evt) {
@@ -105,11 +109,16 @@ bot.on('disconnect', function(evt) {
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
     evt.d.attachments.forEach((embed) => {
-        if (embed.url)
+        if (embed.url) {
             console.log(user + ': ' + embed.url);
+          userData[userID].coins++;
+        }
     });
-    if (message != '') console.log(user + ': ' + message);
-    
+    if (message != '') {
+      console.log(user + ': ' + message);
+    userData[userID].coins++;
+    }
+  
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
         var args = message.substring(2).split(' ');
         var cmd = args[0];
@@ -218,9 +227,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             });
             break
             case 'shop':
-            var Sstring = "";
+            let Sstring = "";
+            let i = 1;
             for (var i of Object.keys(items)) {
-              Sstring+='**'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
+              Sstring+= i + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
+            i++;
             }
               bot.sendMessage({
                 to:channelID,
@@ -228,10 +239,28 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                  "title":"Shop:",
                   "description":Sstring,
                   "footer":{
-                   "text":"Buying items coming soon!" 
+                   "text":"p!buy <item #> to buy items" 
                   }
                 }
               });
+            break;
+          case 'buy':
+            try {
+            if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});
+            else {
+              if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
+             if (userData[userID].coins > Object.keys(items)[args[1]-1].price) {
+               userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
+               bot.sendMessage({to:channelID,message:"Item purchased successfully."});
+             }
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].coins) + " more coins to buy that item"});
+              }
+              else bot.sendMessage({to:channelID,message:"You already own this item!"});
+              }
+            } catch (error) {
+              bot.sendMessage({to:channelID,message:"Error buying item."})
+              console.log("Buying error:\n" + error);
+            }
             break;
                 }}});
 
