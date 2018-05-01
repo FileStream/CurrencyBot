@@ -51,6 +51,7 @@ function pointDB(reading) {
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
                if (r.expireTimes)
+                 console.log(r.expireTimes);
                 userData[r.id].expireTimes = r.expireTimes.split(',');
               }
         });
@@ -59,7 +60,6 @@ function pointDB(reading) {
                 if (err) {}
             });
           for (var v of Object.keys(userData)) {
-            console.log(Object.values(userData[v].expireTimes).toString());  
             collection.insert({
                id: v,
                points: userData[v].points,
