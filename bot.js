@@ -46,6 +46,7 @@ function pointDB(reading) {
             collection.find({}).toArray(function(er, result) {
               for (var r of result) {
                 if (r.points)
+                  console.log("setting pts");
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
