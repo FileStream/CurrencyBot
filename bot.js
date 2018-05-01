@@ -80,7 +80,7 @@ bot.on('ready', function(evt) {
          }
         }
     pointDB(true);
-  console.log(Object.values(items)[0].price);
+  console.log(Object.keys(items));
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
@@ -264,12 +264,12 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});
             else {
               if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
-             if (userData[userID].points > Object.keys(items)[args[1]-1].price) {
-               subPoint(userID,Object.keys(items)[args[1]-1].price);
+             if (userData[userID].points > Object.values(items)[args[1]-1].price) {
+               subPoint(userID,Object.values(items)[args[1]-1].price);
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
-              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].points) + " more points to buy that item"});
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.values(items)[args[1]-1].price-userData[userID].points) + " more points to buy that item"});
               }
               else bot.sendMessage({to:channelID,message:"You already own this item!"});
               }
