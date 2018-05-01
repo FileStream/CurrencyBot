@@ -227,11 +227,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             });
             break
             case 'shop':
-            var Sstring = "";
-            var i = 1;
-            for (var i of Object.keys(items)) {
+            let Sstring = "";
+            let c = 1;
+            for (let i of Object.keys(items)) {
               Sstring+= i + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
-            i++;
+            c++;
             }
               bot.sendMessage({
                 to:channelID,
