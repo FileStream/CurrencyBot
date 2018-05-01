@@ -103,7 +103,7 @@ bot.on('ready', function(evt) {
        if (!items[times['item']]) continue;
       if ((times['date']+(items[times['item']].expireTime*60000))<=now) {
         userData[u].purchasedItems.splice(userData[u].purchasedItems.indexOf(userData[u].expireTimes.find(t=>t.item=times['item'])),0);
-       bot.sendMessage({to:u,message:"Your " + items[times['item']].displayData['name'] + " upgrade has expired. Buy a new one!"}); 
+       bot.sendMessage({to:'"' + u + '"',message:"Your " + items[times['item']].displayData['name'] + " upgrade has expired. Buy a new one!"}); 
       }
        else console.log(u + "'s upgrade is ok");
      }
