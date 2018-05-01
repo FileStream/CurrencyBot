@@ -80,6 +80,7 @@ bot.on('ready', function(evt) {
          }
         }
     pointDB(true);
+  console.log(Object.keys(items)[args[1]-1].price);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
@@ -268,7 +269,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
-              else bot.sendMessage({to:channelID,message:"You need " + (parseInt(Object.keys(items)[args[1]-1].price)-userData[userID].points) + " more points to buy that item"});
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].points) + " more points to buy that item"});
               }
               else bot.sendMessage({to:channelID,message:"You already own this item!"});
               }
