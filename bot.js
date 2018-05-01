@@ -220,7 +220,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             case 'shop':
             var Sstring = "";
             for (var i of Object.keys(items)) {
-              SString+='**'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\n\n';
+              Sstring+='**'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\n\n';
             }
               bot.sendMessage({
                 to:channelID,
