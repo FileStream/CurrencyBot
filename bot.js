@@ -110,7 +110,7 @@ function addPoint(userID, amount) {
  if (amount===undefined) amount=1;
   let itemList = userData[userID].purchasedItems;
   for (let i of Object.keys(items)) {
-   if itemList.includes(i)
+   if (itemList.includes(i))
     amount = items[i].function(amount);
   }
   userData[userID].coins+=amount;
