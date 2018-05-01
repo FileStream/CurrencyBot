@@ -128,12 +128,11 @@ function addPoint(userID, amount) {
    if (itemList.includes(i))
     amount = items[i].function(amount);
   }
-  userData[userID].points = (userData[userID].points + amount);
+  userData[userID].points+=amount;
 }
 
 function subPoint(userID, amount) {
-  userData[userID].points = (userData[userID].points - amount);
-}
+  userData[userID].points += amount;
 
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
@@ -145,7 +144,6 @@ bot.on('message', function(user, userID, channelID, message, evt) {
     });
     if (message != '') {
       console.log(user + ': ' + message);
-    if (!message.substring(0,2) == 'p!')
       addPoint(userID);
     }
   
@@ -303,11 +301,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'add':
             if (userID!='175711685682659328') break;
-            addPoint(args[1]=='me'?userID:args[1],args[2]);
+            addPoint(args[1]=='me'?userID:args[1],parseInt(args[2]));
             break;
           case 'sub':
              if (userID!='175711685682659328') break;
-            subPoint(args[1]=='me'?userID:args[1],args[2]);
+            subPoint(args[1]=='me'?userID:args[1],parseInt(args[2]));
             break;
           case 'getdata':
             if (userID!='175711685682659328') break;
