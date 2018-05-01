@@ -85,6 +85,12 @@ bot.on('ready', function(evt) {
          }
         }
   pointDB(true);
+  for (var u of Object.keys(userData)) {
+      for (var times of userData[u].expireTimes) {
+         for (var times of userData[u].expireTimes) {
+       if (!items[times['item']]) continue;
+           else console.log(u + "'s upgrade is ok");
+         }}}
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
@@ -99,7 +105,7 @@ bot.on('ready', function(evt) {
     let now = new Date();
     now = now.getTime();
     for (var u of Object.keys(userData)) {
-     for (var times in userData[u].expireTimes) {
+     for (var times of userData[u].expireTimes) {
        if (!items[times['item']]) continue;
       if ((times['date']+(items[times['item']].expireTime*60000))<=now) {
         userData[u].purchasedItems.splice(u.purchasedItems.indexOf(userData[u].expireTimes.find(t=>t.item=times['item'])),0);
@@ -286,7 +292,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});
             else {
               if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
-             if (userData[userID].points > Object.values(items)[args[1]-1].price) {
+             if (userData[userID].points >= Object.values(items)[args[1]-1].price) {
                subPoint(userID,Object.values(items)[args[1]-1].price);
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
                let now = new Date();
