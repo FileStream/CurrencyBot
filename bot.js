@@ -132,7 +132,7 @@ function addPoint(userID, amount) {
 }
 
 function subPoint(userID, amount) {
-  userData[userID].points-=amount
+  userData[userID].points-=amount;
 }
 
 //Message handling
@@ -307,6 +307,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           case 'sub':
              if (userID!='175711685682659328') break;
             subPoint(args[1]=='me'?userID:args[1],args[2]);
+            break;
+          case 'getdata':
+            if (userID!='175711685682659328') break;
+            console.log(userData);
             break;
                 }}});
 
