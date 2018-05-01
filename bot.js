@@ -106,17 +106,31 @@ bot.on('disconnect', function(evt) {
     });
 });
 
+function addPoint(userID, amount) {
+ if (amount===undefined) amount=1;
+  let itemList = userData[userID].purchasedItems;
+  for (let i of Object.keys(items)) {
+   if itemList.includes(i)
+    amount = items[i].function(amount);
+  }
+  userData[userID].coins+=amount;
+}
+
+function subPoint(userID, amount) {
+  userData[userID].coins-=amount
+}
+
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
     evt.d.attachments.forEach((embed) => {
         if (embed.url) {
             console.log(user + ': ' + embed.url);
-          userData[userID].coins++;
+          addPoint(userID);
         }
     });
     if (message != '') {
       console.log(user + ': ' + message);
-    userData[userID].coins++;
+    addPoint(userID);
     }
   
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
@@ -230,7 +244,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             let Sstring = "";
             let c = 1;
             for (let i of Object.keys(items)) {
-              Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
+              Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' points**\n\n';
             c++;
             }
               bot.sendMessage({
@@ -250,10 +264,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             else {
               if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
              if (userData[userID].coins > Object.keys(items)[args[1]-1].price) {
+               subPoint(userID,Object.keys(items)[args[1]-1].price);
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
-              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].coins) + " more coins to buy that item"});
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].coins) + " more points to buy that item"});
               }
               else bot.sendMessage({to:channelID,message:"You already own this item!"});
               }
@@ -261,6 +276,14 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               bot.sendMessage({to:channelID,message:"Error buying item."})
               console.log("Buying error:\n" + error);
             }
+            break;
+          case 'add':
+            if (userID!='175711685682659328') break;
+            addPoint(args[1]=='me'?userID:args[1],args[2]);
+            break;
+          case 'sub':
+             if (userID!='175711685682659328') break;
+            subPoint(args[1]=='me'?userID:args[1],args[2]);
             break;
                 }}});
 
