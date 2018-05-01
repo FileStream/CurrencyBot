@@ -63,7 +63,7 @@ function pointDB(reading) {
                id: v,
                points: userData[v].points,
                 purchasedItems: userData[v].purchasedItems.toString(),
-                expireTimes: userData[v].expireTimes)
+                expireTimes: userData[v].expireTimes
               });
                }
         }
