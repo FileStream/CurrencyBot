@@ -45,7 +45,9 @@ function pointDB(reading) {
         if (reading) {
             collection.find({}).toArray(function(er, result) {
               for (var r of result) {
+                if (r.points)
                userData[r.id].points = r.points;
+                if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
               }
         });
@@ -127,7 +129,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     ['p!help [<page #>]', 'Makes this panel open, put in a specific page as an optional parameter'],
                     ['p!ping', "Lets you test how fast the bot's server can respond to you without imploding"],
                     ['p!points',"Lets you see how many points you currently have"],
-                    ['p!shop`,"Opens the shop where you can buy various upgrades"]
+                    ['p!shop',"Opens the shop where you can buy various upgrades"]
                 ];
 
                 if (args[1] == null) {
