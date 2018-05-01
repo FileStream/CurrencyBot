@@ -128,11 +128,11 @@ function addPoint(userID, amount) {
    if (itemList.includes(i))
     amount = items[i].function(amount);
   }
-  userData[userID].points+=amount;
+  userData[userID].points = (userData[userID].points + amount);
 }
 
 function subPoint(userID, amount) {
-  userData[userID].points-=amount;
+  userData[userID].points = (userData[userID].points - amount);
 }
 
 //Message handling
