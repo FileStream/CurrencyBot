@@ -8,12 +8,16 @@ var lastMsg;
 var userData = {};
 var items = {
   'times5': {
-  'expireTime': 60,
-    'function': function(points) {return points*5}
-  }
+  'expireTime': 60, //time from buying to expire in minutes
+    'function': (points) => {return points*5}, //function to be run on points 
+    'price': 500, //price of item in points
+    'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for " + this.expireTime + " minutes."} //data used in store page 
+  },
   'times10': {
-   'expireTime': 30, //time from buying to expire in minutes
-    'function': function(points) {return points*10}
+   'expireTime': 30,
+    'function': (points) => {return points*10},
+    'price': 1500,
+    'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for " + this.expireTime + " minutes."}
     }
 }
 
@@ -40,8 +44,22 @@ function pointDB(reading) {
         var collection = cli.db("test").collection("points");
         if (reading) {
             collection.find({}).toArray(function(er, result) {
+              for (var r of result) {
+               userData[r.id].points = r.points;
+                userData[r.id].purchasedItems = r.purchasedItems.split(',');
+              }
         });
         } else {
+          collection.drop(function(err, delOK) {
+                if (err) {}
+            });
+          for (var v of Object.keys(userData)) {
+              collection.insert({
+               id: v,
+               points: userData[v].points,
+                purchasedItems: userData[v].purchasedItems.toString()
+              });
+               }
         }
         cli.close();
     });
@@ -54,12 +72,12 @@ bot.on('ready', function(evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
         for (var u in Object.values(bot.users)) {
          userData[u.id] = {
-          Points:0,   
+          points:0,   
           purchasedItems: []   
          }
         }
         console.log(items['times10'].function(10));
-    //pointDB(true);
+    pointDB(true);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
@@ -107,7 +125,9 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 //help info
                 var helpInfo = [
                     ['p!help [<page #>]', 'Makes this panel open, put in a specific page as an optional parameter'],
-                    ['p!ping', "Lets you test how fast the bot's server can respond to you without imploding"]
+                    ['p!ping', "Lets you test how fast the bot's server can respond to you without imploding"],
+                    ['p!points',"Lets you see how many points you currently have"],
+                    ['p!shop`,"Opens the shop where you can buy various upgrades"]
                 ];
 
                 if (args[1] == null) {
@@ -185,6 +205,31 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     }, console.log);
                 }
                 break;
+          case 'points':
+            bot.sendMessage({
+              to:channelID,
+              embed: {
+               'title': user + "'s points",
+                'description':userData[userID].points
+              }
+            });
+            break
+            case 'shop':
+            let Sstring = "";
+            for (var i of Object.keys(items)) {
+              SString+='**'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\n\n';
+            }
+              bot.sendMessage({
+                to:channelID,
+                embed: {
+                 "title":"Shop:",
+                  "description":Sstring,
+                  "footer":{
+                   "text":"Buying items coming soon!" 
+                  }
+                }
+              });
+            break;
                 }}});
 
     function sendError(channelID, err) {
