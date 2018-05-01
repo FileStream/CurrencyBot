@@ -52,7 +52,6 @@ function pointDB(reading) {
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
                if (r.expireTimes)
                  console.log(r.expireTimes);
-                userData[r.id].expireTimes = r.expireTimes.split(',');
               }
         });
         } else {
