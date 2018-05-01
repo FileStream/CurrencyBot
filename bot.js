@@ -50,6 +50,7 @@ function pointDB(reading) {
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
+               if (r.expireTimes)
                 userData[r.id].expireTimes = r.expireTimes.split(',');
               }
         });
