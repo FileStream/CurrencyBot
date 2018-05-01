@@ -143,9 +143,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           addPoint(userID);
         }
     });
-    if (message != '' && !message.substring(0,2) == 'p!') {
+    if (message != '') {
       console.log(user + ': ' + message);
-    addPoint(userID);
+    if (!message.substring(0,2) == 'p!')
+      addPoint(userID);
     }
   
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
