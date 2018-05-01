@@ -7,8 +7,13 @@ var pageHolder = [];
 var lastMsg;
 var userData = {};
 var items = {
+  'times5': {
+  'expireTime': 60
+    'function': function(points) => {return points*5}
+  }
   'times10': {
-   'expires':"testdate" 
+   'expireTime': 30, //time from buying to expire in minutes
+    'function': function(points) => {return points*10}
     }
 }
 
@@ -53,7 +58,7 @@ bot.on('ready', function(evt) {
           purchasedItems: []   
          }
         }
-        console.log(items['times10'].expires);
+        console.log(items['times10'].function(10));
     //pointDB(true);
     bot.setPresence({
         game: {
