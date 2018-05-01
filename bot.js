@@ -133,7 +133,7 @@ function addPoint(userID, amount) {
 
 function subPoint(userID, amount) {
   userData[userID].points += amount;
-
+}
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
     evt.d.attachments.forEach((embed) => {
