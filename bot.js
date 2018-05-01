@@ -11,13 +11,13 @@ var items = {
   'expireTime': 60, //time from buying to expire in minutes
     'function': (points) => {return points*5}, //function to be run on points 
     'price': 500, //price of item in points
-    'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for " + this.expireTime + " minutes."} //data used in store page 
+    'displayData': {'name':"5x earn rate",'description':"increases your point earning rate 5x for " + items['times5'].expireTime + " minutes."} //data used in store page 
   },
   'times10': {
    'expireTime': 30,
     'function': (points) => {return points*10},
     'price': 1500,
-    'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for " + this.expireTime + " minutes."}
+    'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for " + items['times10'].expireTime + " minutes."}
     }
 }
 
@@ -220,7 +220,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             case 'shop':
             var Sstring = "";
             for (var i of Object.keys(items)) {
-              Sstring+='**'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\n\n';
+              Sstring+='**'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
             }
               bot.sendMessage({
                 to:channelID,
