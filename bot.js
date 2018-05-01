@@ -81,7 +81,7 @@ bot.on('ready', function(evt) {
          userData[u] = {
           points:0,   
           purchasedItems: [],
-          expireTimes: {}
+          expireTimes: []
          }
         }
     pointDB(true);
