@@ -143,7 +143,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           addPoint(userID);
         }
     });
-    if (message != '') {
+    if (message != '' && !message.substring(0,2) == 'p!') {
       console.log(user + ': ' + message);
     addPoint(userID);
     }
