@@ -7,7 +7,7 @@ var pageHolder = [];
 var lastMsg;
 var userData = {};
 var items = [
-  'times10': {
+  'times10' = {
    'expires':"testdate" 
     }
     ]
