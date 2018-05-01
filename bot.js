@@ -227,8 +227,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             });
             break
             case 'shop':
-            let Sstring = "";
-            let i = 1;
+            var Sstring = "";
+            var i = 1;
             for (var i of Object.keys(items)) {
               Sstring+= i + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
             i++;
