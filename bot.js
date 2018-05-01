@@ -35,7 +35,7 @@ function pointDB(reading) {
         var collection = cli.db("test").collection("points");
         if (reading) {
             collection.find({}).toArray(function(er, result) {
-        //});
+        });
         } else {
         }
         cli.close();
