@@ -64,7 +64,7 @@ function pointDB(reading) {
                id: v,
                points: userData[v].points,
                 purchasedItems: userData[v].purchasedItems.toString(),
-                expireTimes: Object.values(userData[v].expireTimes).toString()
+                expireTimes: Object.values(userData[v].expireTimes)
               });
                }
         }
@@ -84,7 +84,7 @@ bot.on('ready', function(evt) {
           expireTimes: []
          }
         }
-  pointDB(true);
+  //pointDB(true);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
