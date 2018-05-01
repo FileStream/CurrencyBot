@@ -206,7 +206,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                         }
                     }, console.log);
                  else if (args[1] != null) {
-                    var Sstring = '';
+                    let Sstring = '';
                     for (var i = 1; i < args.length; i++)
                         Sstring = Sstring.concat(' ', args[i]);
                      
