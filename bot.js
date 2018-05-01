@@ -113,11 +113,11 @@ function addPoint(userID, amount) {
    if (itemList.includes(i))
     amount = items[i].function(amount);
   }
-  userData[userID].coins+=amount;
+  userData[userID].points+=amount;
 }
 
 function subPoint(userID, amount) {
-  userData[userID].coins-=amount
+  userData[userID].points-=amount
 }
 
 //Message handling
@@ -263,12 +263,12 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});
             else {
               if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
-             if (userData[userID].coins > Object.keys(items)[args[1]-1].price) {
+             if (userData[userID].points > Object.keys(items)[args[1]-1].price) {
                subPoint(userID,Object.keys(items)[args[1]-1].price);
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
-              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].coins) + " more points to buy that item"});
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.keys(items)[args[1]-1].price-userData[userID].points) + " more points to buy that item"});
               }
               else bot.sendMessage({to:channelID,message:"You already own this item!"});
               }
