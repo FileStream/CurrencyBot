@@ -73,8 +73,8 @@ bot.on('ready', function(evt) {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
-        for (var u in Object.values(bot.users)) {
-         userData[u.id] = {
+        for (var u in bot.users) {
+         userData[u] = {
           points:0,   
           purchasedItems: []   
          }
