@@ -230,7 +230,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             let Sstring = "";
             let c = 1;
             for (let i of Object.keys(items)) {
-              Sstring+= i + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
+              Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' coins**\n\n';
             c++;
             }
               bot.sendMessage({
