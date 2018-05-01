@@ -84,7 +84,7 @@ bot.on('ready', function(evt) {
           expireTimes: []
          }
         }
-  //pointDB(true);
+  pointDB(true);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
