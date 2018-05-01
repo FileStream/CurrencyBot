@@ -9,11 +9,11 @@ var userData = {};
 var items = {
   'times5': {
   'expireTime': 60,
-    'function': (points) => {return points*5}
+    'function': function(points) {return points*5}
   }
   'times10': {
    'expireTime': 30, //time from buying to expire in minutes
-    'function': (points) => {return points*10}
+    'function': function(points) {return points*10}
     }
 }
 
