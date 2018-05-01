@@ -6,11 +6,11 @@ var isDeaf = false;
 var pageHolder = [];
 var lastMsg;
 var userData = {};
-var items = [
-  'times10' = {
+var items = {
+  'times10': {
    'expires':"testdate" 
     }
-    ]
+}
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
