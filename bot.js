@@ -8,7 +8,7 @@ var lastMsg;
 var userData = {};
 var items = {
   'times5': {
-  'expireTime': 60
+  'expireTime': 60,
     'function': function(points) => {return points*5}
   }
   'times10': {
