@@ -98,10 +98,10 @@ bot.on('ready', function(evt) {
   setInterval(()=>{
     let now = new Date();
     now = now.getTime();
-    for (var u of Object.values(userData)) {
-     for (var times in u.expireTimes) {
+    for (var u of Object.keys(userData)) {
+     for (var times in userData[u].expireTimes) {
       if ((times['date']+(items[times['item']].expireTime*60000))<now)
-        u.purchasedItems.splice(u.purchasedItems.indexOf(times['item']),0);
+        userData[u].purchasedItems.splice(u.purchasedItems.indexOf(userData[u].expireTimes.find(t=>t.item=times['item'])),0);
      }
     }
   },60000);
