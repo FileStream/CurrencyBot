@@ -80,7 +80,7 @@ bot.on('ready', function(evt) {
          }
         }
     pointDB(true);
-  console.log(Object.keys(items)[args[1]-1].price);
+  console.log(Object.keys(items)[0].price);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
