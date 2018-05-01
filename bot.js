@@ -5,6 +5,12 @@ var MongoClient = require('mongodb').MongoClient; //Get database functions
 var isDeaf = false;
 var pageHolder = [];
 var lastMsg;
+var userData = {};
+var items = [
+  'times10': {
+   'expires':"testdate" 
+    }
+    ]
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -20,15 +26,15 @@ var bot = new Discord.Client({
 });
 
 //MongoDB stuff
-//const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@bottlebot-zidlm.mongodb.net/test";
+const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@pointdata-xx892.mongodb.net/test";
 
-function rememberDB(reading) {
+function pointDB(reading) {
     MongoClient.connect(uri, function(err, cli) {
         if (err)
             console.log(err);
-//        var collection = cli.db("test").collection("remembers");
+        var collection = cli.db("test").collection("points");
         if (reading) {
- //           collection.find({}).toArray(function(er, result) {
+            collection.find({}).toArray(function(er, result) {
         //});
         } else {
         }
@@ -41,7 +47,14 @@ bot.on('ready', function(evt) {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
-    //rememberDB(true);
+        for (var u in Object.values(bot.users)) {
+         userData[u.id] = {
+          Points:0,   
+          purchasedItems: []   
+         }
+        }
+        console.log(items['times10'].expires);
+    //pointDB(true);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
