@@ -340,8 +340,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'fix':
           if (userID!='175711685682659328') break;
-            let data = userData[args[1]=='me'?userID:args[1]];
-            data = {
+            userData[args[1]=='me'?userID:args[1]] = {
           points:0,   
           purchasedItems: [],
           expireTimes: []
