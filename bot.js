@@ -144,12 +144,14 @@ function addPoint(channelID, userID, amount) {
  if (amount===undefined) amount=1;
   let itemList = userData[userID].purchasedItems;
   for (let i of Object.keys(items)) {
-   if (Object.values(itemList).includes(i)) {
+    for (var o of itemList) {
+   if (o.item.includes(i)) {
     amount = items[i].function([channelID,userID,amount]);
     if (itemList.find(n=>n.item==i).uses==1)
       itemList.splice(itemList.indexOf(itemList.find(it=>it.item==i)),1);
      else if (itemList.find(n=>n.item==i).uses>1) 
        itemList.find(n=>n.item==i).uses-=1
+   }
    }
   }
   userData[userID].points+=amount;
