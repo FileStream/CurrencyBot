@@ -62,7 +62,6 @@ function pointDB(reading) {
             collection.find({}).toArray(function(er, result) {
               for (var r of result) {
                 if (r.points)
-                  console.log("setting pts");
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
@@ -147,7 +146,10 @@ function addPoint(channelID, userID, amount) {
   for (let i of Object.keys(items)) {
    if (itemList.includes(i)) {
     amount = items[i].function([channelID,userID,amount]);
-    if (items[i].uses!=0) {itemList.splice[itemList.indexOf(itemList.find(it=>it==i)),1]}
+    if (itemList.find(n=>n.item==i).uses==1)
+      itemList.splice(itemList.indexOf(itemList.find(it=>it.item==i)),1);
+     else if (itemList.find(n=>n.item==i).uses>1) 
+       itemList.find(n=>n.item==i).uses-=1
    }
   }
   userData[userID].points+=amount;
@@ -189,7 +191,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     ['p!help [<page #>]', 'Makes this panel open, put in a specific page as an optional parameter'],
                     ['p!ping', "Lets you test how fast the bot's server can respond to you without imploding"],
                     ['p!points',"Lets you see how many points you currently have"],
-                    ['p!shop',"Opens the shop where you can buy various upgrades"]
+                    ['p!shop',"Opens the shop where you can buy various items & upgrades"]
                 ];
 
                 if (args[1] == null) {
@@ -306,7 +308,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
              if (userData[userID].points >= Object.values(items)[args[1]-1].price) {
                subPoint(userID,Object.values(items)[args[1]-1].price);
-               userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
+               userData[userID].purchasedItems.push({'item':Object.keys(items)[args[1]-1],'uses':items[Object.keys(items)[args[1]-1]].uses});
                let now = new Date();
                now = now.getTime();
                if (items[Object.keys(items)[args[1]-1]].expireTime != 0)
