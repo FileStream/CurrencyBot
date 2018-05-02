@@ -30,7 +30,7 @@ var items = {
     },
   'banana': {
    'expireTime': 0,
-    'function': (points) => {bot.sendMessage({to:points[0],embed:{"image":{"url":"https://previews.123rf.com/images/atoss/atoss1206/atoss120600044/14033487-one-banana-on-white-background.jpg"}}),
+    'function': (points) => {bot.sendMessage({to:points[0],embed:{"image":{"url":"https://previews.123rf.com/images/atoss/atoss1206/atoss120600044/14033487-one-banana-on-white-background.jpg"}}}),
     'uses': 1,
     'price': 100,
     'displayData': {'name':"banana",'description':"yes"}
