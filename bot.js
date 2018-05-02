@@ -64,7 +64,7 @@ function pointDB(reading) {
                 if (r.points)
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
-                userData[r.id].purchasedItems = r.purchasedItems.split(',');
+                //userData[r.id].purchasedItems = r.purchasedItems;
                if (r.expireTimes)
                 userData[r.id].expireTimes = r.expireTimes;
               }
@@ -77,7 +77,7 @@ function pointDB(reading) {
             collection.insert({
                id: v,
                points: userData[v].points,
-                purchasedItems: userData[v].purchasedItems.toString(),
+                purchasedItems: userData[v].purchasedItems,
                 expireTimes: userData[v].expireTimes
               });
                }
