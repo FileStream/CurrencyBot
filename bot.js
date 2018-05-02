@@ -147,7 +147,7 @@ function addPoint(channelID, userID, amount) {
   for (let i of Object.keys(items)) {
    if (itemList.includes(i)) {
     amount = items[i].function([channelID,userID,amount]);
-    if (items[i].uses!=0) {itemList.splice[itemList.indexOf(itemList.find(i)),1]}
+    if (items[i].uses!=0) {itemList.splice[itemList.indexOf(itemList.find(it=>it==i)),1]}
    }
   }
   userData[userID].points+=amount;
