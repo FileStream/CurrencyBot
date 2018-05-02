@@ -338,20 +338,14 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             if (userID!='175711685682659328') break;
             console.log(userData);
             break;
-          case 'set':
+          case 'fix':
           if (userID!='175711685682659328') break;
             let data = userData[args[1]=='me'?userID:args[1]];
-            switch(args[2]) {
-              case 'points':
-                data.points = parseInt(args[3]);
-                break;
-              case 'items':
-                data.purchasedItems = args[3].split(',');
-                break;
-              case 'expires':
-                data.expireTimes = args[3].split(',');
-                break;
-            }
+            data = {
+          points:0,   
+          purchasedItems: [],
+          expireTimes: []
+         }
             break;
                 }}});
 
