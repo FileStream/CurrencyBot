@@ -343,7 +343,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             let data = userData[args[1]=='me'?userID:args[1]];
             switch(args[2]) {
               case 'points':
-                data.points = args[3];
+                data.points = parseInt(args[3]);
                 break;
               case 'items':
                 data.purchasedItems = args[3];
