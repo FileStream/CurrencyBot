@@ -341,7 +341,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           case 'set':
           if (userID!='175711685682659328') break;
             let data = userData[args[1]=='me'?userID:args[1]];
-            switch(args[3]) {
+            switch(args[2]) {
               case 'points':
                 data.points = args[3];
                 break;
