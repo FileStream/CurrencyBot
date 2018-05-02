@@ -10,14 +10,30 @@ var items = {
   'times5': {
   'expireTime': 60, //time from buying to expire in minutes
     'function': (points) => {return points*5}, //function to be run on points 
+    'uses': 0,
     'price': 500, //price of item in points
     'displayData': {'name':"5x earn rate",'description':"increases your point earning rate 5x for 60 minutes."} //data used in store page 
   },
   'times10': {
    'expireTime': 30,
-    'function': (points) => {return points*10},
+    'function': (points) => {return points[2]*10},
+    'uses': 0,
     'price': 1500,
     'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for 30 minutes."}
+    },
+  'admin': {
+   'expireTime': 1,
+    'function': (points) => {return points[2]},
+    'uses': 0,
+    'price': 1000000000,
+    'displayData': {'name':"Admin privileges",'description':"lets you do whatever you want"}
+    },
+  'banana': {
+   'expireTime': 0,
+    'function': (points) => {bot.sendMessage({to:points[0],embed:{"image":{"url":"https://previews.123rf.com/images/atoss/atoss1206/atoss120600044/14033487-one-banana-on-white-background.jpg"}}),
+    'uses': 1,
+    'price': 100,
+    'displayData': {'name':"banana",'description':"yes"}
     }
 }
 
@@ -51,7 +67,6 @@ function pointDB(reading) {
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems.split(',');
                if (r.expireTimes)
-                 console.log(r.expireTimes);
                 userData[r.id].expireTimes = r.expireTimes;
               }
         });
@@ -126,12 +141,13 @@ bot.on('disconnect', function(evt) {
     });
 });
 
-function addPoint(userID, amount) {
+function addPoint(channelID, userID, amount) {
  if (amount===undefined) amount=1;
   let itemList = userData[userID].purchasedItems;
   for (let i of Object.keys(items)) {
    if (itemList.includes(i))
-    amount = items[i].function(amount);
+    amount = items[i].function([channelID,userID,amount]);
+    if (items[i].uses!=0) {itemList.splice[itemList.indexOf(itemList.find(i)),1]}
   }
   userData[userID].points+=amount;
 }
@@ -144,12 +160,12 @@ bot.on('message', function(user, userID, channelID, message, evt) {
     evt.d.attachments.forEach((embed) => {
         if (embed.url) {
             console.log(user + ': ' + embed.url);
-          addPoint(userID);
+          addPoint(channelID,userID);
         }
     });
     if (message != '') {
       console.log(user + ': ' + message);
-      addPoint(userID);
+      addPoint(channelID,userID);
     }
   
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
@@ -292,6 +308,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                userData[userID].purchasedItems.push(Object.keys(items)[args[1]-1]);
                let now = new Date();
                now = now.getTime();
+               if (items[Object.keys(items)[args[1]-1]].expireTime != 0)
                userData[userID].expireTimes.push({'item':Object.keys(items)[args[1]-1],'date':now});
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
@@ -306,7 +323,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'add':
             if (userID!='175711685682659328') break;
-            addPoint(args[1]=='me'?userID:args[1],parseInt(args[2]));
+            addPoint(channelID,args[1]=='me'?userID:args[1],parseInt(args[2]));
             break;
           case 'sub':
              if (userID!='175711685682659328') break;
