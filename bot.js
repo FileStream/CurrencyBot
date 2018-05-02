@@ -346,10 +346,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 data.points = parseInt(args[3]);
                 break;
               case 'items':
-                data.purchasedItems = args[3];
+                data.purchasedItems = args[3].split(',');
                 break;
               case 'expires':
-                data.expireTimes = args[3];
+                data.expireTimes = args[3].split(',');
                 break;
             }
             break;
