@@ -61,12 +61,14 @@ function pointDB(reading) {
         if (reading) {
             collection.find({}).toArray(function(er, result) {
               for (var r of result) {
+                if (r.id) {
                 if (r.points)
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems;
                if (r.expireTimes)
                 userData[r.id].expireTimes = r.expireTimes;
+                }
               }
         });
         } else {
