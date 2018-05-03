@@ -10,7 +10,7 @@ var items = {
   'times5': {
   'expireTime': 60, //time from buying to expire in minutes
     'function': (points) => {return points*5}, //function to be run on points 
-    'uses': 0,
+    'uses': 0,//# of times an item can be used
     'price': 500, //price of item in points
     'displayData': {'name':"5x earn rate",'description':"increases your point earning rate 5x for 60 minutes."} //data used in store page 
   },
@@ -30,7 +30,7 @@ var items = {
     },
   'banana': {
    'expireTime': 0,
-    'function': (points) => {bot.sendMessage({to:points[0],embed:{"image":{"url":"https://previews.123rf.com/images/atoss/atoss1206/atoss120600044/14033487-one-banana-on-white-background.jpg"}}});return points[2];},
+    'function': (points) => {bot.sendMessage({to:points[0],embed:{"image":{"url":"https://previews.123rf.com/images/atoss/atoss1206/atoss120600044/14033487-one-banana-on-white-background.jpg"}}})},
     'uses': 1,
     'price': 100,
     'displayData': {'name':"banana",'description':"yes"}
@@ -147,13 +147,8 @@ function addPoint(channelID, userID, amount) {
   let itemList = userData[userID].purchasedItems;
   for (let i of Object.keys(items)) {
     for (var o of itemList) {
-   if (o.item.includes(i)) {
+   if (o.item.includes(i) && itemList.find(n=>n.item==i).uses==0)
     amount = items[i].function([channelID,userID,amount]);
-    if (itemList.find(n=>n.item==i).uses==1)
-      itemList.splice(itemList.indexOf(itemList.find(it=>it.item==i)),1);
-     else if (itemList.find(n=>n.item==i).uses>1) 
-       itemList.find(n=>n.item==i).uses-=1
-   }
    }
   }
   userData[userID].points+=amount;
@@ -162,6 +157,19 @@ function addPoint(channelID, userID, amount) {
 function subPoint(userID, amount) {
   userData[userID].points -= amount;
 }
+
+function useItem(channelID, userID, item) {
+  let itemList = userData[userID].purchasedItems;
+ if (itemList.find(n=>n.item==item).uses==1) {
+     items[item].function([channelID,userID]);
+      itemList.splice(itemList.indexOf(itemList.find(it=>it.item==item)),1);
+ }
+     else if (itemList.find(n=>n.item==item).uses>1) {
+       items[item].function([channelID,userID]);
+       itemList.find(n=>n.item==item).uses-=1;
+     }
+    }
+
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
     evt.d.attachments.forEach((embed) => {
@@ -347,6 +355,30 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           purchasedItems: [],
           expireTimes: []
          }
+            break;
+          case 'items':
+          let Sstring = "";
+            let c = 1;
+            for (let i of Object.keys(items).find(ite=>ite.uses!=0)) {
+              Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nUses left: **' + userData[userID].purchasedItems.find(u=>u.item==i).uses + '**\n\n';
+            c++;
+            }
+             bot.sendMessage({
+                to:channelID,
+                embed: {
+                 "title":user + "'s items:",
+                  "description":Sstring,
+                  "footer":{
+                   "text":"p!use <item #> to use items" 
+                  }
+                }
+              });
+            break;
+          case 'use':
+            let useItems = Object.keys(items).find(ite=>ite.uses!=0);
+            if (args[1]) {
+             useItem(channelID,userID,useItems[args[1]]); 
+            }
             break;
                 }}});
 
