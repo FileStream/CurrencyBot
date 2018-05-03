@@ -294,7 +294,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 'description':userData[userID].points
               }
             });
-            break
+            break;
             case 'shop':
             let Sstring = "";
             let c = 1;
@@ -357,8 +357,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
          }
             break;
           case 'items':
-          var Sstring = "";
-            var c = 1;
+          let Sstring = "";
+            let c = 1;
             for (let i of Object.keys(items).find(ite=>ite.uses!=0)) {
               Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nUses left: **' + userData[userID].purchasedItems.find(u=>u.item==i).uses + '**\n\n';
             c++;
