@@ -295,7 +295,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               }
             });
             break;
-            case 'shop':
+            case 'shop': {
             let Sstring = "";
             let c = 1;
             for (let i of Object.keys(items)) {
@@ -313,6 +313,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 }
               });
             break;
+            }
           case 'buy':
             try {
             if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});
@@ -356,7 +357,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           expireTimes: []
          }
             break;
-          case 'items':
+          case 'items': {
           let Sstring = "";
             let c = 1;
             for (let i of Object.keys(items).find(ite=>ite.uses!=0)) {
@@ -374,12 +375,14 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 }
               });
             break;
-          case 'use':
+          }
+          case 'use': {
             let useItems = Object.keys(items).find(ite=>ite.uses!=0);
             if (args[1]) {
              useItem(channelID,userID,useItems[args[1]]); 
             }
             break;
+          }
                 }}});
 
     function sendError(channelID, err) {
