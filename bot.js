@@ -360,7 +360,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           case 'items': {
           let Sstring = "";
             let c = 1;
-            for (let i of Object.keys(items).find(ite=>ite.uses!=0)) {
+            for (let i of Object.keys(items).find(ite=>ite['uses']!=0)) {
               Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nUses left: **' + userData[userID].purchasedItems.find(u=>u.item==i).uses + '**\n\n';
             c++;
             }
@@ -377,7 +377,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           }
           case 'use': {
-            let useItems = Object.keys(items).find(ite=>ite.uses!=0);
+            let useItems = Object.keys(items).find(ite=>ite['uses']!=0);
             if (args[1]) {
              useItem(channelID,userID,useItems[args[1]]); 
             }
