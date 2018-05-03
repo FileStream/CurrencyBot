@@ -360,8 +360,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           case 'items': {
           let Sstring = "";
             let c = 1;
-            if (userData[userID].purchasedItems.find(it=>it.uses!=0)) {
-            for (let i of userData[userID].purchasedItems.find(it=>it.uses!=0)) {
+            if (userData[userID].purchasedItems.filter(it=>it.uses!=0)) {
+            for (let i of userData[userID].purchasedItems.filter(it=>it.uses!=0)) {
               Sstring+= c + ': **'+items[i.item].displayData.name+'**\n   *' + items[i.item].displayData.description + '*\nUses left: **' + i.uses + '**\n\n';
             c++;
             }
