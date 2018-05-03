@@ -61,7 +61,7 @@ function pointDB(reading) {
         if (reading) {
             collection.find({}).toArray(function(er, result) {
               for (var r of result) {
-                if (r.id) {
+                if (r.i) {
                 if (r.points)
                userData[r.id].points = r.points;
                 if (r.purchasedItems)
@@ -100,7 +100,7 @@ bot.on('ready', function(evt) {
           expireTimes: []
          }
         }
-  pointDB(true);
+  //pointDB(true);
     bot.setPresence({
         game: {
             name: "p!help | " + (Object.keys(bot.servers).length) + " servers"
