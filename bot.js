@@ -381,6 +381,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           }
           case 'use': {
             let useItems = userData[userID].purchasedItems.filter(ite=>ite.uses!=0).map(it=>it.item);
+            console.log(useItems);
             if (args[1]) {
              useItem(channelID,userID,useItems[args[1]]); 
             }
