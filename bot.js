@@ -376,7 +376,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 }
               });
             }
-            else {bot.sendMessage({to:channelID,message:"You have no usable items."});
+            else {bot.sendMessage({to:channelID,message:"You have no usable items."})}
             break;
           }
           case 'use': {
