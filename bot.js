@@ -54,8 +54,8 @@ var items = {
     },
   'admin': {
    'expireTime': 1,
-    'function': (points) => {return points[2]},
-    'uses': 0,
+    'function': (points) => {bot.sendMessage({to:points[0],message:"this doesn't actually do anything get prankt nerd"})},
+    'uses': 1,
     'price': bigInteger(1000000000),
     'displayData': {'name':"Admin privileges",'description':"lets you do whatever you want"}
     },
