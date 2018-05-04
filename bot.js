@@ -483,15 +483,17 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           }
           case 'donate': {
-           if (userData[args[1]] && !args[2].includes('-') && !bigInteger(args[2])==bigInteger(0) && !(args[2]===NaN)) {
+           if (userData[args[1]] && !args[2].includes('-') && !bigInteger(args[2])==bigInteger(0) && args[2]!=NaN) {
             if (userData[userID].points >= bigInteger(args[2])) {
              userData[args[1]].points.add(bigInteger(args[2]));
              userData[userID].points.subtract(bigInteger(args[2])); 
+              bot.sendMessage({to:channelID,message:"Donated successfully."});
             }
              else
                bot.sendMessage({to:channelID,message:"You cannot donate more points than you currently have."});
            } 
             else bot.sendMessage({to:channelID,message:"Error donating."});
+            break;
           }
                 }}});
 
