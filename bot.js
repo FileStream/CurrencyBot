@@ -6,33 +6,34 @@ var isDeaf = false;
 var pageHolder = [];
 var lastMsg;
 var userData = {};
+const bigInteger = require('./javascript-biginteger-master').BigInteger;
 var items = {
   'times5': {
   'expireTime': 60, //time from buying to expire in minutes
-    'function': (points) => {return points[2]*5}, //function to be run on points 
+    'function': (points) => {return points[2].multiply(5)}, //function to be run on points 
     'uses': 0,//# of times an item can be used
-    'price': 500, //price of item in points
+    'price': bigInteger(500), //price of item in points
     'displayData': {'name':"5x earn rate",'description':"increases your point earning rate 5x for 60 minutes."} //data used in store page 
   },
   'times10': {
    'expireTime': 30,
-    'function': (points) => {return points[2]*10},
+    'function': (points) => {return points[2].multiply(10)},
     'uses': 0,
-    'price': 1500,
+    'price': bigInteger(1500),
     'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for 30 minutes."}
     },
   'admin': {
    'expireTime': 1,
     'function': (points) => {return points[2]},
     'uses': 0,
-    'price': 1000000000,
+    'price': bigInteger(1000000000),
     'displayData': {'name':"Admin privileges",'description':"lets you do whatever you want"}
     },
   'banana': {
    'expireTime': 0,
     'function': (points) => {bot.sendMessage({to:points[0],embed:{"image":{"url":"https://previews.123rf.com/images/atoss/atoss1206/atoss120600044/14033487-one-banana-on-white-background.jpg"}}})},
     'uses': 1,
-    'price': 100,
+    'price': bigInteger(100),
     'displayData': {'name':"banana",'description':"yes"}
     }
 }
@@ -63,7 +64,7 @@ function pointDB(reading) {
               for (var r of result) {
                 if (r.id) {
                 if (r.points)
-               userData[r.id].points = r.points;
+               userData[r.id].points = bigInteger.parse(userData[r.id].points);
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems;
                if (r.expireTimes)
@@ -78,7 +79,7 @@ function pointDB(reading) {
           for (var v of Object.keys(userData)) {
             collection.insert({
                id: v,
-               points: userData[v].points,
+               points: userData[v].points.toString(),
                 purchasedItems: userData[v].purchasedItems,
                 expireTimes: userData[v].expireTimes
               });
@@ -95,7 +96,7 @@ bot.on('ready', function(evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
         for (var u in bot.users) {
          userData[u] = {
-          points:0,   
+          points:bigInteger(0),   
           purchasedItems: [],
           expireTimes: []
          }
@@ -151,11 +152,11 @@ function addPoint(channelID, userID, amount) {
     amount = items[i].function([channelID,userID,amount]);
    }
   }
-  userData[userID].points+=amount;
+  userData[userID].points = userData[userID].points.add(amount);
 }
 
 function subPoint(userID, amount) {
-  userData[userID].points -= amount;
+  userData[userID].points = userData[userID].points.subtract(amount);
 }
 
 function useItem(channelID, userID, item) {
@@ -291,7 +292,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               to:channelID,
               embed: {
                'title': user + "'s points",
-                'description':userData[userID].points
+                'description':userData[userID].points.toString()
               }
             });
             break;
@@ -299,7 +300,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             let Sstring = "";
             let c = 1;
             for (let i of Object.keys(items)) {
-              Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price + ' points**\n\n';
+              Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price.toString() + ' points**\n\n';
             c++;
             }
               bot.sendMessage({
@@ -321,7 +322,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             else {
                           if (args[2]&&!items[Object.keys(items)[args[1]-1]].uses==0) count=parseInt(args[2]);
               if (!userData[userID].purchasedItems.find(it=>it.item==Object.keys(items)[args[1]-1])) {
-             if (userData[userID].points >= Object.values(items)[args[1]-1].price*count) {
+             if (userData[userID].points >= Object.values(items)[args[1]-1].price.multiply(count)) {
                subPoint(userID,Object.values(items)[args[1]-1].price*count);
                userData[userID].purchasedItems.push({'item':Object.keys(items)[args[1]-1],'uses':items[Object.keys(items)[args[1]-1]].uses*count});
                let now = new Date();
@@ -330,7 +331,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                userData[userID].expireTimes.push({'item':Object.keys(items)[args[1]-1],'date':now});
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
-              else bot.sendMessage({to:channelID,message:"You need " + (Object.values(items)[args[1]-1].price*count-userData[userID].points) + " more points to buy that item"});
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.values(items)[args[1]-1].price.multiply(count).subtract(userData[userID].points)) + " more points to buy that item"});
               }
               else {
                 if (items[Object.keys(items)[args[1]-1]].uses==0)
@@ -360,7 +361,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           case 'fix':
           if (userID!='175711685682659328') break;
             userData[args[1]=='me'?userID:args[1]] = {
-          points:0,   
+          points:bigInteger(0),   
           purchasedItems: [],
           expireTimes: []
          }
