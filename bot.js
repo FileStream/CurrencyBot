@@ -316,21 +316,29 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             }
           case 'buy':
             try {
+              let count = 1;
             if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});
+              if (args[2]) count=parseInt(args[2]);
             else {
-              if (!userData[userID].purchasedItems.includes(Object.keys(items)[args[1]-1])) {
-             if (userData[userID].points >= Object.values(items)[args[1]-1].price) {
-               subPoint(userID,Object.values(items)[args[1]-1].price);
-               userData[userID].purchasedItems.push({'item':Object.keys(items)[args[1]-1],'uses':items[Object.keys(items)[args[1]-1]].uses});
+              if (!userData[userID].purchasedItems.find(it=>it.item==Object.keys(items)[args[1]-1])) {
+             if (userData[userID].points >= Object.values(items)[args[1]-1].price*count) {
+               subPoint(userID,Object.values(items)[args[1]-1].price*count);
+               userData[userID].purchasedItems.push({'item':Object.keys(items)[args[1]-1],'uses':items[Object.keys(items)[args[1]-1]].uses*count});
                let now = new Date();
                now = now.getTime();
                if (items[Object.keys(items)[args[1]-1]].expireTime != 0)
                userData[userID].expireTimes.push({'item':Object.keys(items)[args[1]-1],'date':now});
                bot.sendMessage({to:channelID,message:"Item purchased successfully."});
              }
-              else bot.sendMessage({to:channelID,message:"You need " + (Object.values(items)[args[1]-1].price-userData[userID].points) + " more points to buy that item"});
+              else bot.sendMessage({to:channelID,message:"You need " + (Object.values(items)[args[1]-1].price*count-userData[userID].points) + " more points to buy that item"});
               }
-              else bot.sendMessage({to:channelID,message:"You already own this item!"});
+              else {
+                if (items[Object.keys(items)[args[1]-1]].uses==0)
+                bot.sendMessage({to:channelID,message:"You already own this item!"});
+                    else
+                userData[userID].purchasedItems.find(it=>it.item==Object.keys(items)[args[1]-1]).uses+=items[Object.keys(items)[args[1]-1]].uses;
+              bot.sendMessage({to:channelID,message:"Item purchased successfully."});     
+              }
               }
             } catch (error) {
               bot.sendMessage({to:channelID,message:"Error buying item."})
