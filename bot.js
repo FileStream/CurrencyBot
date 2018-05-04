@@ -144,7 +144,8 @@ bot.on('disconnect', function(evt) {
 });
 
 function addPoint(channelID, userID, amount) {
- if (amount===undefined) amount=1;
+ if (amount===undefined) amount=bigInteger(1);
+  else amount = bigInteger(amount);
   let itemList = userData[userID].purchasedItems;
   for (let i of Object.keys(items)) {
     for (var o of itemList) {
