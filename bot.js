@@ -484,7 +484,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           }
           case 'donate': {
-           if (userData[args[1]] && !args[2].includes('-') && !bigInteger(args[2])==bigInteger(0) && bigInteger.parse(args[2])!=NaN) {
+           if (userData[args[1]] && !args[2].includes('-') && bigInteger(args[2])!=bigInteger(0) && bigInteger.parse(args[2])!=NaN) {
              if (args[1].length == 21)
                             args[1] = args[1].slice(2, -1);
                         else
