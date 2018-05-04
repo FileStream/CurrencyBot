@@ -237,7 +237,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     ['p!shop',"Opens the shop where you can buy various items & upgrades"],
                   ['p!buy <item #> [<quanity>]',"Buys an item from the shop with an optional quantity (quantities only apply to some items)"],
                   ['p!items',"Shows all limited-use items in your inventory. Items that expire after a certain time such as multipliers are automatically active and WILL NOT be shown here."],
-                ['p!use <item #> [<who/what to use the item on>]',"Uses an item from your inventory with a possible second parameter of a person/thing for the item to be used on"]
+                ['p!use <item #> [<who/what to use the item on>]',"Uses an item from your inventory with a possible second parameter of a person/thing for the item to be used on"],
+                ['p!donate <mention> <amount>',"Donate a specified amount of your points to a mentioned user."]
                 ];
 
                 if (args[1] == null) {
@@ -484,6 +485,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           }
           case 'donate': {
            if (userData[args[1]] && !args[2].includes('-') && !bigInteger(args[2])==bigInteger(0) && args[2]!=NaN) {
+             if (args[1].length == 21)
+                            args[1] = args[1].slice(2, -1);
+                        else
+                            args[1] = args[1].slice(3, -1);
             if (userData[userID].points >= bigInteger(args[2])) {
              userData[args[1]].points = userData[args[1]].points.add(bigInteger(args[2]));
              userData[userID] = userData[userID].points.subtract(bigInteger(args[2])); 
