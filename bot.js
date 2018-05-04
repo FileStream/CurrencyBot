@@ -336,7 +336,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price.toString() + ' points**\n\n';
             c++;
             }
-              if (args[1]) {
+              if (!args[1]) {
               var holder = Sstring.split('\n\n');
                     for (var i = 0; i < holder.length; i++) {
                         // var Sstring = spliceSlice(helpText, i - 1, '#$#');
