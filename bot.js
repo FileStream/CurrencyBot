@@ -360,7 +360,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 }
               }, (err, res) => lastMsg[channelID].msg = res.id);
               } else {
-                    if (pageHolder[channelID].user == userID && args[1] <= pageHolder.text.length) {
+                    if (pageHolder[channelID].user == userID && args[1] <= pageHolder[channelID].text.length) {
                         bot.editMessage({
                             channelID: channelID,
                             messageID: lastMsg[channelID].msg,
