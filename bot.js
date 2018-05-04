@@ -26,11 +26,15 @@ var items = {
    'expireTime': 0,
     'function': (points) => {
     let u = points[2].d.content.split(' ')[2];
+      if (u.length == 21)
+                            u = u.slice(2, -1);
+                        else
+                            u = u.slice(3, -1);
       if (userData[u])
         userData[u].points = userData[u].points.subtract(5000);
       else {
         userData[points[1]].points.add(10000);
-        bot.sendMessage({to:points[0],message:"Something went wrong using this item. Your money has been refunded."});
+        bot.sendMessage({to:points[0],message:"Something went wrong using this item. Your points have been refunded."});
       }
     },
     'uses': 1,
@@ -41,11 +45,15 @@ var items = {
    'expireTime': 0,
     'function': (points) => {
     let u = points[2].d.content.split(' ')[2];
+                   if (u.length == 21)
+                            u = u.slice(2, -1);
+                        else
+                            u = u.slice(3, -1);
       if (userData[u])
         userData[u].points = userData[u].points.subtract(25000);
       else {
         userData[points[1]].points.add(50000);
-        bot.sendMessage({to:points[0],message:"Something went wrong using this item. Your money has been refunded."});
+        bot.sendMessage({to:points[0],message:"Something went wrong using this item. Your points have been refunded."});
       }
     },
     'uses': 1,
@@ -484,11 +492,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           }
           case 'donate': {
-           if (userData[args[1]] && !args[2].includes('-') && bigInteger.parse(args[2])!=bigInteger(0) && bigInteger.parse(args[2])!=NaN) {
-             if (args[1].length == 21)
+                         if (args[1].length == 21)
                             args[1] = args[1].slice(2, -1);
                         else
                             args[1] = args[1].slice(3, -1);
+           if (userData[args[1]] && !args[2].includes('-') && bigInteger.parse(args[2])!=bigInteger(0) && !isNaN(args[2])) {
             if (userData[userID].points >= bigInteger(args[2])) {
              userData[args[1]].points = userData[args[1]].points.add(bigInteger(args[2]));
              userData[userID] = userData[userID].points.subtract(bigInteger(args[2])); 
