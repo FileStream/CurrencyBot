@@ -3,8 +3,8 @@ var Discord = require('discord.io');
 var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var isDeaf = false;
-var pageHolder = [];
-var lastMsg;
+var pageHolder = {};
+var lastMsg = {};
 var userData = {};
 const bigInteger = require('biginteger').BigInteger;
 var items = {
@@ -234,7 +234,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     ['p!help [<page #>]', 'Makes this panel open, put in a specific page as an optional parameter'],
                     ['p!ping', "Lets you test how fast the bot's server can respond to you without imploding"],
                     ['p!points',"Lets you see how many points you currently have"],
-                    ['p!shop',"Opens the shop where you can buy various items & upgrades"]
+                    ['p!shop',"Opens the shop where you can buy various items & upgrades"],
+                  ['p!buy <item #> [<quanity>]',"Buys an item from the shop with an optional quantity (quantities only apply to some items)"],
+                  ['p!items',"Shows all limited-use items in your inventory. Items that expire after a certain time such as multipliers are automatically active and WILL NOT be shown here."],
+                ['p!use <item #> [<who/what to use the item on>]',"Uses an item from your inventory with a possible second parameter of a person/thing for the item to be used on"]
                 ];
 
                 if (args[1] == null) {
@@ -252,8 +255,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                         if (i % 4 == 0 && i != 0)
                             holder[i] = holder[i].concat('```\n#$#\n```diff');
                     }
-                    pageHolder = holder.join('\n\n').split('#$#');
-                    pageHolder.push(userID);
+                    pageHolder[channelID].text = holder.join('\n\n').split('#$#');
+                    pageHolder[channelID].user = userID;
                     bot.sendMessage({
                         to: channelID,
                         embed: {
@@ -261,20 +264,20 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                             "color": Math.floor(Math.random() * 16777215) + 1,
                             "description": pageHolder[0],
                             "footer": {
-                                "text": "Page 1/" + (pageHolder.length - 1) + ', use "p!help <page #>" to switch pages'
+                                "text": "Page 1/" + (pageHolder[channelID].text.length) + ', use "p!help <page #>" to switch pages'
                             }
                         }
-                    }, (err, res) => lastMsg = res.id);
+                    }, (err, res) => lastMsg[channelID].msg = res.id);
                 } else {
-                    if (pageHolder[pageHolder.length - 1] == userID && args[1] < pageHolder.length) {
+                    if (pageHolder[channelID].user == userID && args[1] <= pageHolder[channelID].text.length) {
                         bot.editMessage({
                             channelID: channelID,
-                            messageID: lastMsg,
+                            messageID: lastMsg[channelID].msg,
                             embed: {
                                 "color": Math.floor(Math.random() * 16777215) + 1,
-                                "description": pageHolder[(args[1] - 1)],
+                                "description": pageHolder[channelID].text[(args[1] - 1)],
                                 "footer": {
-                                    "text": "Page " + args[1] + "/" + (pageHolder.length - 1) + ', use "p!help <page #>" to switch pages'
+                                    "text": "Page " + args[1] + "/" + (pageHolder[channelID].text.length) + ', use "p!help <page #>" to switch pages'
                                 }
                             }
                         });
@@ -333,13 +336,36 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               Sstring+= c + ': **'+items[i].displayData.name+'**\n   *' + items[i].displayData.description + '*\nPrice: **' + items[i].price.toString() + ' points**\n\n';
             c++;
             }
+              if (args[1]) {
+              var holder = Sstring.split('\n\n');
+                    for (var i = 0; i < holder.length; i++) {
+                        // var Sstring = spliceSlice(helpText, i - 1, '#$#');
+                        if (i % 4 == 0 && i != 0)
+                            holder[i] = holder[i].concat('```\n#$#\n```diff');
+                    }
+                    pageHolder[channelID].text = holder.join('\n\n').split('#$#');
+              pageHolder[channelID].user = userID;
               bot.sendMessage({
                 to:channelID,
                 embed: {
                  "title":"Shop:",
                   "description":Sstring,
                   "footer":{
-                   "text":"p!buy <item #> to buy items" 
+                   "text":"p!buy <item #> to buy items, b!shop <page #> to switch pages.\n\nPage 1/" + pageHolder[channelID].text.length 
+                  }
+                }
+              }, (err, res) => lastMsg[channelID].msg = res.id);
+              }
+              } else {
+                    if (pageHolder[channelID].user == userID && args[1] <= pageHolder.text.length) {
+                        bot.editMessage({
+                            channelID: channelID,
+                            messageID: lastMsg[channelID].msg,
+                          embed: {
+                 "title":"Shop:",
+                  "description":pageHolder.text[(args[1] - 1)],
+                  "footer":{
+                   "text":"p!buy <item #> to buy items, b!shop <page #> to switch pages.\n\nPage" + args[1] + "/" + pageHolder[channelID].text.length 
                   }
                 }
               });
