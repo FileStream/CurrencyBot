@@ -25,7 +25,7 @@ var items = {
   'bomb': {
    'expireTime': 0,
     'function': (points) => {
-    let u = points[2].split(' ')[2];
+    let u = points[2].d.content.split(' ')[2];
       if (userData[u])
         userData[u].points = userData[u].points.subtract(5000);
       else {
@@ -40,7 +40,7 @@ var items = {
   'nuke': {
    'expireTime': 0,
     'function': (points) => {
-    let u = points[2].split(' ')[2];
+    let u = points[2].d.content.split(' ')[2];
       if (userData[u])
         userData[u].points = userData[u].points.subtract(25000);
       else {
