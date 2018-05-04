@@ -435,18 +435,43 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               Sstring+= c + ': **'+items[i.item].displayData.name+'**\n   *' + items[i.item].displayData.description + '*\nUses left: **' + i.uses + '**\n\n';
             c++;
             }
-             bot.sendMessage({
+              if (!args[1]) {
+              var holder = Sstring.split('\n\n');
+                    for (var i = 0; i < holder.length; i++) {
+                        // var Sstring = spliceSlice(helpText, i - 1, '#$#');
+                        if (i % 4 == 0 && i != 0)
+                            holder[i] = holder[i].concat('```\n#$#\n```diff');
+                    }
+                if (!pageHolder[channelID]) pageHolder[channelID] = {};
+                  if (!lastMsg[channelID]) lastMsg[channelID] = {};
+                    pageHolder[channelID].text = holder.join('\n\n').split('#$#');
+              pageHolder[channelID].user = userID;
+              bot.sendMessage({
                 to:channelID,
                 embed: {
                  "title":user + "'s items:",
                   "description":Sstring,
-                  "footer":{
-                   "text":"p!use <item #> to use items" 
+                   "footer":{
+                   "text":"p!use <item #> to use items, p!items <page #> to switch pages.\n\nPage 1/" + pageHolder[channelID].text.length 
+                  }
+                }
+              }, (err, res) => lastMsg[channelID].msg = res.id);
+              } else {
+                    if (pageHolder[channelID].user == userID && args[1] <= pageHolder[channelID].text.length) {
+                        bot.editMessage({
+                            channelID: channelID,
+                            messageID: lastMsg[channelID].msg,
+                          embed: {
+                 "title":user + "'s items:",
+                  "description":Sstring,
+                   "footer":{
+                   "text":"p!use <item #> to use items, p!items <page #> to switch pages.\n\nPage " + args[1] + "/" + pageHolder[channelID].text.length 
                   }
                 }
               });
-            }
-            else {bot.sendMessage({to:channelID,message:"You have no usable items."})}
+                    }
+              }
+            } else {bot.sendMessage({to:channelID,message:"You have no usable items."})}
             break;
           }
           case 'use': {
