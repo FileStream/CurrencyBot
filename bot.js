@@ -368,7 +368,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                  "title":"Shop:",
                   "description":pageHolder[channelID].text[(args[1] - 1)],
                   "footer":{
-                   "text":"p!buy <item #> to buy items, b!shop <page #> to switch pages.\n\nPage" + args[1] + "/" + pageHolder[channelID].text.length 
+                   "text":"p!buy <item #> to buy items, b!shop <page #> to switch pages.\n\nPage " + args[1] + "/" + pageHolder[channelID].text.length 
                   }
                 }
               });
