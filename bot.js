@@ -6,7 +6,7 @@ var isDeaf = false;
 var pageHolder = [];
 var lastMsg;
 var userData = {};
-const bigInteger = require('./javascript-biginteger-master/').BigInteger;
+const bigInteger = require('./javascript-biginteger-master/BigInteger.js').BigInteger;
 var items = {
   'times5': {
   'expireTime': 60, //time from buying to expire in minutes
