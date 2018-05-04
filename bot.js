@@ -145,7 +145,6 @@ bot.on('disconnect', function(evt) {
 
 function addPoint(channelID, userID, amount) {
  if (amount===undefined) amount=bigInteger(1);
-  else amount = bigInteger(amount);
   let itemList = userData[userID].purchasedItems;
   for (let i of Object.keys(items)) {
     for (var o of itemList) {
@@ -349,11 +348,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'add':
             if (userID!='175711685682659328') break;
-            addPoint(channelID,args[1]=='me'?userID:args[1],parseInt(args[2]));
+            addPoint(channelID,args[1]=='me'?userID:args[1],bigInteger.parse(args[2]));
             break;
           case 'sub':
              if (userID!='175711685682659328') break;
-            subPoint(args[1]=='me'?userID:args[1],parseInt(args[2]));
+            subPoint(args[1]=='me'?userID:args[1],bigInteger.parse(args[2]));
             break;
           case 'getdata':
             if (userID!='175711685682659328') break;
