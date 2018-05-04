@@ -19,8 +19,38 @@ var items = {
    'expireTime': 30,
     'function': (points) => {return points[2].multiply(10)},
     'uses': 0,
-    'price': bigInteger(1500),
+    'price': bigInteger(5000),
     'displayData': {'name':"10x earn rate",'description':"increases your point earning rate 10x for 30 minutes."}
+    },
+  'bomb': {
+   'expireTime': 0,
+    'function': (points) => {
+    let u = points[2].split(' ')[2];
+      if (userData[u])
+        userData[u].points = userData[u].points.subtract(5000);
+      else {
+        userData[points[1]].points.add(10000);
+        bot.sendMessage({to:points[0],message:"Something went wrong using this item. Your money has been refunded."});
+      }
+    },
+    'uses': 1,
+    'price': bigInteger(10000),
+    'displayData': {'name':"bomb",'description':"subtract 5000 points from another user"}
+    },
+  'nuke': {
+   'expireTime': 0,
+    'function': (points) => {
+    let u = points[2].split(' ')[2];
+      if (userData[u])
+        userData[u].points = userData[u].points.subtract(25000);
+      else {
+        userData[points[1]].points.add(50000);
+        bot.sendMessage({to:points[0],message:"Something went wrong using this item. Your money has been refunded."});
+      }
+    },
+    'uses': 1,
+    'price': bigInteger(50000),
+    'displayData': {'name':"nuke",'description':"subtract 25000 points from another user"}
     },
   'admin': {
    'expireTime': 1,
@@ -159,14 +189,14 @@ function subPoint(userID, amount) {
   userData[userID].points = userData[userID].points.subtract(amount);
 }
 
-function useItem(channelID, userID, item) {
+function useItem(channelID, userID, item, event) {
   let itemList = userData[userID].purchasedItems;
  if (itemList.find(n=>n.item==item).uses==1) {
-     items[item].function([channelID,userID]);
+     items[item].function([channelID,userID,event]);
       itemList.splice(itemList.indexOf(itemList.find(it=>it.item==item)),1);
  }
      else if (itemList.find(n=>n.item==item).uses>1) {
-       items[item].function([channelID,userID]);
+       items[item].function([channelID,userID,event]);
        itemList.find(n=>n.item==item).uses-=1;
      }
     }
@@ -392,9 +422,20 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             let useItems = userData[userID].purchasedItems.filter(ite=>ite.uses!=0).map(it=>it.item);
             console.log(useItems);
             if (args[1]) {
-             useItem(channelID,userID,useItems[parseInt(args[1])-1]); 
+             useItem(channelID,userID,useItems[parseInt(args[1])-1],evt); 
             }
             break;
+          }
+          case 'donate': {
+           if (userData[args[1]] && !args[2].includes('-') && !bigInteger(args[2])==bigInteger(0) && args[2]!===NaN) {
+            if (userData[userID].points >= bigInteger(args[2])) {
+             userData[args[1]].points.add(bigInteger(args[2]));
+             userData[userID].points.subtract(bigInteger(args[2])); 
+            }
+             else
+               bot.sendMessage({to:channelID,message:"You cannot donate more points than you currently have."});
+           } 
+            else bot.sendMessage({to:channelID,message:"Error donating."});
           }
                 }}});
 
