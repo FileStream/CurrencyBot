@@ -94,7 +94,7 @@ function pointDB(reading) {
               for (var r of result) {
                 if (r.id) {
                 if (r.points)
-               userData[r.id].points = bigInteger.parse(userData[r.id].points);
+               userData[r.id].points = bigInteger.parse(r.points);
                 if (r.purchasedItems)
                 userData[r.id].purchasedItems = r.purchasedItems;
                if (r.expireTimes)
