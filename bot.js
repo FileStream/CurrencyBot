@@ -319,7 +319,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               let count = 1;
             if (!args[1]) bot.sendMessage({to:channelID,message:"Please specify a number as the second parameter. (Ex. p!buy 2)"});           
             else {
-                          if (args[2]) count=parseInt(args[2]);
+                          if (args[2]&&!items[Object.keys(items)[args[1]-1]].uses==0) count=parseInt(args[2]);
               if (!userData[userID].purchasedItems.find(it=>it.item==Object.keys(items)[args[1]-1])) {
              if (userData[userID].points >= Object.values(items)[args[1]-1].price*count) {
                subPoint(userID,Object.values(items)[args[1]-1].price*count);
