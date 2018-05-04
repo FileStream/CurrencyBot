@@ -9,7 +9,7 @@ var userData = {};
 var items = {
   'times5': {
   'expireTime': 60, //time from buying to expire in minutes
-    'function': (points) => {return points*5}, //function to be run on points 
+    'function': (points) => {return points[2]*5}, //function to be run on points 
     'uses': 0,//# of times an item can be used
     'price': 500, //price of item in points
     'displayData': {'name':"5x earn rate",'description':"increases your point earning rate 5x for 60 minutes."} //data used in store page 
