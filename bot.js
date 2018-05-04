@@ -255,6 +255,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                         if (i % 4 == 0 && i != 0)
                             holder[i] = holder[i].concat('```\n#$#\n```diff');
                     }
+                  if (!pageHolder[channelID]) pageHolder[channelID] = {};
+                  if (!lastMsg[channelID]) lastMsg[channelID] = {};
                     pageHolder[channelID].text = holder.join('\n\n').split('#$#');
                     pageHolder[channelID].user = userID;
                     bot.sendMessage({
@@ -262,7 +264,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                         embed: {
                             "title": bot.username + ' command list:',
                             "color": Math.floor(Math.random() * 16777215) + 1,
-                            "description": pageHolder[0],
+                            "description": pageHolder[channelID].text[0],
                             "footer": {
                                 "text": "Page 1/" + (pageHolder[channelID].text.length) + ', use "p!help <page #>" to switch pages'
                             }
@@ -343,6 +345,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                         if (i % 4 == 0 && i != 0)
                             holder[i] = holder[i].concat('```\n#$#\n```diff');
                     }
+                if (!pageHolder[channelID]) pageHolder[channelID] = {};
+                  if (!lastMsg[channelID]) lastMsg[channelID] = {};
                     pageHolder[channelID].text = holder.join('\n\n').split('#$#');
               pageHolder[channelID].user = userID;
               bot.sendMessage({
