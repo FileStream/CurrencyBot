@@ -8,6 +8,6 @@
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "winston": "^2.4.0",
     "mongodb": "^3.0.4",
-    "biginteger":"./javascript-biginteger-master/biginteger.js"
+    "biginteger":"./javascript-biginteger-master/"
   }
 }
