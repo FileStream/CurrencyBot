@@ -366,7 +366,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                             messageID: lastMsg[channelID].msg,
                           embed: {
                  "title":"Shop:",
-                  "description":pageHolder.text[(args[1] - 1)],
+                  "description":pageHolder[channelID].text[(args[1] - 1)],
                   "footer":{
                    "text":"p!buy <item #> to buy items, b!shop <page #> to switch pages.\n\nPage" + args[1] + "/" + pageHolder[channelID].text.length 
                   }
