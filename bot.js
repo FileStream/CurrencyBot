@@ -218,7 +218,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
         switch (cmd) {
             case 'ping':
                 var date = new Date(Date.now());
-                var currentTime = (date.getSeconds() * 1000) + date.getMilliseconds();
+                var currentTime = date.getMilliseconds();
                 var msgTime = (parseInt(evt.d.timestamp.split('.')[0].split(':')[2]) * 1000) + parseInt(evt.d.timestamp.split('.')[1].substring(0, 3));
                 bot.sendMessage({
                     to: channelID,
