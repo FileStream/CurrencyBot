@@ -211,17 +211,6 @@ function useItem(channelID, userID, item, event) {
 
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
-    evt.d.attachments.forEach((embed) => {
-        if (embed.url) {
-            console.log(user + ': ' + embed.url);
-          addPoint(channelID,userID);
-        }
-    });
-    if (message != '') {
-      console.log(user + ': ' + message);
-      addPoint(channelID,userID);
-    }
-  
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
         var args = message.substring(2).split(' ');
         var cmd = args[0];
