@@ -508,7 +508,7 @@ else if (channelID=='443228306557632533'&&userID=='417093667778723840') {
                       cleverbot.ask(message, function (err, response) {
 if (err)
 throw response;
-bot.sendMessage({to:channelID,message:response});
+bot.sendMessage({to:channelID,message:response,typing:true});
 }); 
                  });
                 }
