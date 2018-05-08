@@ -502,11 +502,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           }
                 }}
 else if (channelID=='443228306557632533'&&userID=='417093667778723840') {
-  var Sstring = args.slice(1).join(' ');
-                if (Sstring) {
+                if (message) {
                     cleverbot.setNick("pointbot");
                  cleverbot.create(function (err, response) {
-                      cleverbot.ask(Sstring, function (err, response) {
+                      cleverbot.ask(message, function (err, response) {
 if (err)
 throw response;
 bot.sendMessage({to:channelID,message:response});
