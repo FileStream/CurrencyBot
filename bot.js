@@ -6,6 +6,9 @@ var isDeaf = false;
 var pageHolder = {};
 var lastMsg = {};
 var userData = {};
+var cbot = require('cleverbot.io');
+var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'pointbot'); 
+
 const bigInteger = require('biginteger').BigInteger;
 var items = {
   'times5': {
@@ -497,7 +500,22 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             else bot.sendMessage({to:channelID,message:"Error donating."});
             break;
           }
-                }}});
+                }}
+else if (channelID=='443228306557632533'&&userID=='417093667778723840') {
+  var Sstring = args.slice(1).join(' ');
+                if (Sstring) {
+                    cleverbot.setNick("pointbot");
+                 cleverbot.create(function (err, response) {
+                      cleverbot.ask(Sstring, function (err, response) {
+if (err)
+throw response;
+bot.sendMessage({to:channelID,message:response});
+}); 
+                 });
+                }
+}
+
+});
 
     function sendError(channelID, err) {
         bot.sendMessage({
