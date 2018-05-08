@@ -8,6 +8,7 @@
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "winston": "^2.4.0",
     "biginteger": "^1.0.3",
-    "mongodb": "^3.0.4"
+    "mongodb": "^3.0.4",
+        "cleverbot.io": "^1.0.4"
   }
 }
