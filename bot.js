@@ -328,7 +328,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               to:channelID,
               embed: {
                'title': user + "'s points",
-                'description':userData[userID].points.toString()
+                'description':addCommas(userData[userID].points);
               }
             });
             break;
@@ -535,6 +535,13 @@ bot.sendMessage({to:channelID,message:response,typing:true});
 
         return str.slice(0, index) + (add || "") + str.slice(index, str.length - 1);
     }
+
+function addCommas(points) {
+ points = Array.from(points.toString());
+  for (let i=0;i<points.length;i++)
+    if (i%3==0&&i!=0&&i!=(points.length-1)) points.splice(i,0,',');
+  return points.join('');
+}
 
     function findRole(role, channelID, userID) {
         try {
