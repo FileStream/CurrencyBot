@@ -328,7 +328,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               to:channelID,
               embed: {
                'title': user + "'s points",
-                'description':addCommas(userData[userID].points);
+                'description':addCommas(userData[userID].points)
               }
             });
             break;
