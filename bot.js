@@ -538,7 +538,7 @@ bot.sendMessage({to:channelID,message:response,typing:true});
 
 function addCommas(points) {
  points = Array.from(points.toString());
-  for (let i=0;i<points.length;i++)
+  for (let i=points.length-1;i>=0;i--)
     if (i%3==0&&i!=0&&i!=(points.length-1)) points.splice(i,0,',');
   return points.join('');
 }
