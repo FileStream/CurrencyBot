@@ -538,9 +538,10 @@ bot.sendMessage({to:channelID,message:response,typing:true});
 
 function addCommas(points) {
  points = Array.from(points.toString());
+  temppoints = points;
   for (let i=points.length-1;i>=0;i--)
-    if (i%3==0&&i+1!=0&&i!=(points.length-1)) points.splice(i+1,0,',');
-  return points.join('');
+    if (i%3==0&&i+1!=0&&i!=(points.length-1)) temppoints.splice(i,0,',');
+  return temppoints.join('');
 }
 
     function findRole(role, channelID, userID) {
