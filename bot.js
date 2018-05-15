@@ -103,7 +103,7 @@ function pointDB(reading) {
         if (reading) {
             collection.find({}).toArray(function(er, result) {
               for (var r of result) {
-                if (r.id) {
+                if (userData[r.id]) {
                 if (r.points)
                userData[r.id].points = bigInteger.parse(r.points);
                 if (r.purchasedItems)
