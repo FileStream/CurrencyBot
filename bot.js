@@ -513,6 +513,8 @@ bot.sendMessage({to:channelID,message:response,typing:true});
                  });
                 }
 }
+  
+else if (message=="b!exile"&&userID=='175711685682659328') {bot.leaveServer({serverID:'428702206078746634'})}
 
 });
 
