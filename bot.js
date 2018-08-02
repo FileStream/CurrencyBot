@@ -228,6 +228,18 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
                 });
                 break;
+            case 'echo':
+                if (args[1] != null && findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) {
+                    var Sstring = '';
+                    for (var i = args[1] != 'id' ? 1 : 3; i < args.length; i++) {
+                        Sstring = Sstring.concat(' ', args[i]);
+                    }
+                    bot.sendMessage({
+                        to: args[1] != 'id' ? channelID : args[2],
+                        message: Sstring
+                    });
+                }
+                break;
             case 'help':
                 //help info
                 var helpInfo = [
