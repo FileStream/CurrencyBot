@@ -340,10 +340,12 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'getvoice':
             if (userID == '175711685682659328') {
-              let vchannels = Object.values(bot.servers['428702206078746634'].channels).filter(x=>x.type!='text');
+              //var scantarget = '428702206078746634';
+             var scantarget = '455536028946661397';
+              let vchannels = Object.values(bot.servers[scantarget].channels).filter(x=>x.type!='text');
               for (var c of Object.values(vchannels)) {
                console.log("Voice channel name: " + c.name);
-                console.log("Current occupants: " + Object.values(bot.servers['428702206078746634'].members).filter(m => m.voice_channel_id == c.id).map(x=>x.nick));
+                console.log("Current occupants: " + Object.values(bot.servers[scantarget].members).filter(m => m.voice_channel_id == c.id).map(x=>x.nick));
               }
             }
             break;
