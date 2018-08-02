@@ -333,7 +333,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 }
                 break;
           case 'getservers':
-            for (var v in Object.values(bot.servers)) {
+            for (var v of Object.values(bot.servers)) {
              console.log("Server name: " + v.name);
               console.log("Server name: " + v.id);
             }
