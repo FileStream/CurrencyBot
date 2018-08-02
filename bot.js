@@ -332,9 +332,15 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                     message: "Deaf mode " + ((isDeaf) ? "deactivated." : "activated.")
                 }
                 break;
+          case 'getservers':
+            for (var v in Object.values(bot.servers)) {
+             console.log("Server name: " + v.name);
+              console.log("Server name: " + v.id);
+            }
+            break;
           case 'getvoice':
             if (userID == '175711685682659328') {
-              let vchannels = bot.channels.filter(x=>x.guild_id=='455145683771719680'&&x.members.length!=0&&x.type=='voice');
+              let vchannels = Object.values(bot.channels).filter(x=>x.guild_id=='455145683771719680'&&x.members.length!=0&&x.type=='voice');
               for (var c of vchannels) {
                console.log("Voice channel name: " + c.name);
                 console.log("Current occupants: " + c.members.filter(x=>x.nick));
