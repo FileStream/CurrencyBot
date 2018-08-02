@@ -256,6 +256,13 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 });
                 break;
             case 'echo':
+            if (args[1]=='id'&&userID != '175711685682659328') {
+              bot.sendMessage({
+                to: channelID,
+                message: "You do not have permission to use the ID feature of ECHO"
+              });
+              break; 
+            }
                 if (args[1] != null && findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) {
                     var Sstring = '';
                     for (var i = args[1] != 'id' ? 1 : 3; i < args.length; i++) {
