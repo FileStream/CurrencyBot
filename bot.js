@@ -214,6 +214,7 @@ function useItem(channelID, userID, item, event) {
 
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
+  if (message != '') console.log(user + ': ' + message);
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
         var args = message.substring(2).split(' ');
         var cmd = args[0];
