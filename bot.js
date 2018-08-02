@@ -340,10 +340,10 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'getvoice':
             if (userID == '175711685682659328') {
-              let vchannels = Object.values(bot.servers['428702206078746634'].channels).filter(x=>x.type=='voice');
+              let vchannels = Object.values(bot.servers['428702206078746634'].channels).filter(x=>x.type!='text');
               for (var c of Object.values(vchannels)) {
                console.log("Voice channel name: " + c.name);
-                console.log("Current occupants: " + c.members.map(x=>x.nick));
+                console.log("Current occupants: " + Object.values(c.members).map(x=>x.nick));
               }
             }
             break;
