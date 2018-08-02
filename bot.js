@@ -345,7 +345,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               let vchannels = Object.values(bot.servers[scantarget].channels).filter(x=>x.type!='text');
               for (var c of Object.values(vchannels)) {
                console.log("Voice channel name: " + c.name);
-                console.log("Current occupants: " + Object.values(bot.servers[scantarget].members).filter(m => m.voice_channel_id == c.id).map(x=>x.nick));
+                console.log("Current occupants: " + Object.values(bot.servers[scantarget].members).filter(m => m.voice_channel_id == c.id).map(x=>x.nick).toString());
               }
             }
             break;
