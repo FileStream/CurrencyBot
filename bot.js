@@ -215,6 +215,16 @@ function useItem(channelID, userID, item, event) {
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
   if (message != '') console.log(user + ': ' + message);
+   MongoClient.connect(uri, function(err, cli) {
+        if (err)
+            console.log(err);
+        var collection = cli.db("test").collection("msgs");
+            collection.insert({
+                        sender: user,
+                        message: message
+                    });
+            cli.close();
+        });
     if (message.substring(0, 2) == 'p!' && (!isDeaf || userID == '175711685682659328')) {
         var args = message.substring(2).split(' ');
         var cmd = args[0];
