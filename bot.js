@@ -225,6 +225,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                         sender: user,
                         message: embed.proxy_url
                     });
+            console.log(user + ': ' + embed.proxy_url);
             cli.close();
         });
         }
