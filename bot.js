@@ -343,7 +343,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               let vchannels = Object.values(bot.servers['428702206078746634'].channels).filter(x=>x.type!='text');
               for (var c of Object.values(vchannels)) {
                console.log("Voice channel name: " + c.name);
-                console.log("Current occupants: " + Object.keys(c.members));
+                console.log("Current occupants: " + Object.values(bot.servers['428702206078746634'].members).filter(m => m.voice_channel_id == c.id).map(x=>x.nick));
               }
             }
             break;
