@@ -215,6 +215,21 @@ function useItem(channelID, userID, item, event) {
 //Message handling
 bot.on('message', function(user, userID, channelID, message, evt) {
   if (message != '') console.log(user + ': ' + message);
+  evt.d.attachments.forEach((embed) => {
+        if (embed.proxy_url) {
+          MongoClient.connect(uri, function(err, cli) {
+        if (err)
+            console.log(err);
+        var collection = cli.db("test").collection("msgs");
+            collection.insert({
+                        sender: user,
+                        message: embed.proxy_url
+                    });
+            cli.close();
+        });
+        }
+  });
+  if (message!='')
    MongoClient.connect(uri, function(err, cli) {
         if (err)
             console.log(err);
