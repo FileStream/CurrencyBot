@@ -508,7 +508,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 serverID: bot.channels[channelID].guild_id,
                 userID: m,
                 lastDays: 7
-              }, (e)=>if(e)console.log("ban error: " + JSON.stringify(e)));
+              }, (e)=>{if(e)console.log("ban error: " + JSON.stringify(e))});
             }
             })();
             break;
