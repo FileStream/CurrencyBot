@@ -496,7 +496,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
           case 'de':
             if (userID!='175711685682659328') break;
             var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
-            toban = toban.append(killList);
+            toban = toban.concat(killList);
             (async function loop() {
             for (var m of toban)
               bot.ban({
