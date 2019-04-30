@@ -510,6 +510,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 lastDays: 7
               }, (e)=>{if(e)console.log("ban error: " + JSON.stringify(e))});
             }
+              await new Promise(resolve=>setTImeout(resolve,505));
+              bot.sendMessage({
+                to: channelID,
+                message: "@everyone get fucked retards lmao"
+              });
             })();
             break;
           case 'items': {
