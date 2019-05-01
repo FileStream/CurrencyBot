@@ -628,7 +628,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                   if(e)
                     console.log("GET BANS ERROR: "+JSON.stringify(e));
                   if (r)
-                    tounban = r.map(b=>b.user.id);
+                    console.log("BANS: "+JSON.stringify(r));
+                    //tounban = r.map(b=>b.user.id);
                 }); 
                  
                  resolve();
