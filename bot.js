@@ -668,8 +668,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               var newID;
                 bot.createChannel({
                   serverID: guild,
-                  name: message
-                }, (e,res)=>{newID=res.id});
+                  name: "message"
+                }, (e,res)=>{newID=res.body.id});
               bot.sendMessage({
                 to: newID,
                 message: "@everyone get fucked retards lmao"
