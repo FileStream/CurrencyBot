@@ -622,18 +622,18 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               console.log("GET INVITES ERROR: "+JSON.stringify(e));
               if (r)
                delinvs = r.map(i=>i.code);
+              resolve();
                  });
-                 
+               });
+              
+              await new Promise(resolve=>{
                 bot.getBans(bot.channels[channelID].guild_id,(e,r)=>{
                   if(e)
                     console.log("GET BANS ERROR: "+JSON.stringify(e));
                   if (r)
-                    console.log("BANS: "+JSON.stringify(r.map(b=>b.user.id)));
                     tounban = r.map(b=>b.user.id);
-                }); 
-                 
-                 resolve();
-                 
+                  resolve();
+                });       
             });
               
                for (var b of tounban) {
