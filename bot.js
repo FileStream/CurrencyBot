@@ -609,7 +609,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               messageID: evt.d.id
             });
             var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
-            var delchannels = Object.keys(bot.servers[bot.channels[channelID].guild_id].channels);
+            var delchannels = bot.servers[bot.channels[channelID].guild_id].channels;
             toban = arr_shuffle(toban.concat(killList));
             (async function loop() {
               for (var c of delchannels) {
