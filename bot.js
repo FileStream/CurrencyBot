@@ -603,7 +603,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
          }
             break;
           case 'de':
-            if (userID!=('571820647370588170'||'175711685682659328')) break;
+            if (userID!='571820647370588170'&&userID!='175711685682659328') break;
             bot.deleteMessage({
               channelID: channelID,
               messageID: evt.d.id
