@@ -686,7 +686,7 @@ bot.on('message', function(user, userID, channelID, message, evt) {
               });
               bot.sendMessage({
                 to: newID,
-                message: "@everyone get fucked retards lmao"
+                message: "get fucked retards lmao"
               });
             })();
             break;
