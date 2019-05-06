@@ -415,7 +415,8 @@ function getCommas(x) {
     return parts.join(".");
 }
 
-bigInteger.prototype.toDisplayString = getCommas.bind(this);
+bigInteger.prototype.toDisplayString = getCommas(this);
+
 
 function findRole(role, channelID, userID) {
     try {
