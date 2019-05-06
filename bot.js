@@ -3,7 +3,7 @@ const Discord = require('discord.io'); //Discord API
 const logger = require('winston');
 const MongoClient = require('mongodb').MongoClient; //Get database functions
 const cbot = require('cleverbot.io');
-const cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'pointbot');
+const cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'xchange');
 const bigInteger = require('biginteger').BigInteger; //Handle arbitrarily large numbers
 const creator_id = '175711685682659328';
 
@@ -229,6 +229,24 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 if (userID != creator_id) break;
                 console.log(JSON.stringify(userData));
                 break;
+        }
+    }
+    else if ((message.includes('417093667778723840') && !userID.includes('417093667778723840')) {
+        var args = message.substring(2).split(' ');
+        var Sstring = args.slice(1).join(' ');
+        if (Sstring) {
+            cleverbot.setNick("xchange");
+            cleverbot.create(function (err, response) {
+                cleverbot.ask(Sstring, function (err, response) {
+                    if (err)
+                        throw response;
+                    bot.sendMessage({
+                        to: channelID,
+                        message: response,
+                        typing: true
+                    });
+                });
+            });
         }
     }
     else if (channelID == '575078510876688404' && userID == '417093667778723840') {
