@@ -410,8 +410,10 @@ function spliceSlice(str, index, add) {
 }
 
 function getCommas(x) {
-    if (x) this = x;
-    var parts = this.toString().split(".");
+     if (!x)
+        var parts = this.toString().split(".");
+     else
+         var parts = x.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
 }
