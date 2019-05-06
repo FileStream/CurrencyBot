@@ -114,8 +114,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
 
     if (message.substring(0, 2) == 'x!') {
-        var args = message.substring(2).split(' ');
+        var args = message.substring(2).split(/ +/);
         var cmd = args[0];
+        args = args.splice(0);
+
         switch (cmd) {
             case 'ping':
                 var date = new Date();
@@ -142,7 +144,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 }
                 break;
             case 'help':
-
                 if (!args[1]) args[1] = 1; //Automatically set page to 1 if no page # is specified
 
                 var helpInfo = [
