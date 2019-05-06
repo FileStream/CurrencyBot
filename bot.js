@@ -220,7 +220,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 break;
             case 'backup':
                 (async function () {
-                    if (userID != creator_id) break;
+                    if (userID != creator_id) return;
                     await pushDB("userdata", userData)
                     bot.sendMessage({ to: channelID, message: "Sent data to database." });
                 })();
