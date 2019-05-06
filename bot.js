@@ -161,7 +161,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 var page = args[1] - 1;
 
                 for (var command of helpInfo[page])
-                    helpText = helpText + ((command.restricted != true) ? '+ ' : '- ') + command.trigger + '\n--- ' + command.desc + ((i + 1 != helpInfo[page].length) ? "\n\n" : "```");
+                    helpText = helpText + ((command.restricted != true) ? '+ ' : '- ') + command.trigger + '\n--- ' + command.desc + ((helpInfo[page].indexOf(command) + 1 != helpInfo[page].length) ? "\n\n" : "```");
 
 
                 bot.sendMessage({
