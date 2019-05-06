@@ -33,7 +33,7 @@ function pullDB(collection, receiver) {
         MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
-            var collection = cli.db("datastore").collection(collection);
+            var collection = cli.db("datastore").collection(collection.toString());
             collection.find({}).toArray(function (er, result) {
                 for (var r of result) {
                     try {
@@ -60,7 +60,7 @@ function pushDB(collection, sender, doWipe = false) {
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
                 reject();
             }
-            var collection = cli.db("datastore").collection(collection);
+            var collection = cli.db("datastore").collection(collection.toString());
             if (doWipe)
                 collection.drop(function (error, delOK) {
                     if (error) console.log("DROP DB ERROR: " + JSON.stringify(error));
