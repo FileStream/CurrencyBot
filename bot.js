@@ -113,7 +113,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message != '') console.log(user + ': ' + message); //log all messages
 
 
-    if (message.substring(0, 2) == 'x!' && (!isDeaf || userID == creator_id)) {
+    if (message.substring(0, 2) == 'x!') {
         var args = message.substring(2).split(' ');
         var cmd = args[0];
         switch (cmd) {
@@ -175,12 +175,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         }
                     }
                 });
-                break;
-            case 'deafen':
-                if (userID == creator_id) {
-                    isDeaf = !isDeaf;
-                    message: "Deaf mode " + ((isDeaf) ? "deactivated." : "activated.")
-                }
                 break;
             case 'getservers':
                 for (var v of Object.values(bot.servers)) {
