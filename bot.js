@@ -1,10 +1,10 @@
 //Set global constants
-const Discord = require('discord.io'); //Discord API
-const logger = require('winston');
-const MongoClient = require('mongodb').MongoClient; //Get database functions
-const cbot = require('cleverbot.io');
-const cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'pointbot');
-const bigInteger = require('biginteger').BigInteger; //Handle arbitrarily large numbers
+var Discord = require('discord.io'); //Discord API
+var logger = require('winston');
+var MongoClient = require('mongodb').MongoClient; //Get database functions
+var cbot = require('cleverbot.io');
+var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'pointbot');
+var bigInteger = require('biginteger').BigInteger; //Handle arbitrarily large numbers
 const creator_id = '175711685682659328';
 
 //Set global mutables
