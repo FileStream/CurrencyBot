@@ -11,6 +11,8 @@ var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY, 'pointbot');
 
 const bigInteger = require('biginteger').BigInteger;
 
+test
+
 var killList = [
 "521913607353532425",
 "521485082473529345",
