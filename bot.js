@@ -231,7 +231,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 break;
         }
     }
-    else if ((message.includes('417093667778723840') && !userID.includes('417093667778723840')) {
+    else if (message.includes('417093667778723840') && !userID.includes('417093667778723840')) {
         var args = message.substring(2).split(' ');
         var Sstring = args.slice(1).join(' ');
         if (Sstring) {
