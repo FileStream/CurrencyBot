@@ -235,7 +235,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         var args = message.substring(2).split(' ');
         var Sstring = args.slice(1).join(' ');
         if (Sstring) {
-            cleverbot.setNick("xchange");
+            cleverbot.setNick("yotsuba");
             cleverbot.create(function (err, response) {
                 cleverbot.ask(Sstring, function (err, response) {
                     if (err)
@@ -251,7 +251,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     }
     else if (channelID == '575078510876688404' && userID == '417093667778723840') {
         if (message) {
-            cleverbot.setNick("xchange");
+            cleverbot.setNick("yotsuba");
             cleverbot.create(function (err, response) {
                 cleverbot.ask(message, function (err, response) {
                     if (err)
