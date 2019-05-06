@@ -28,12 +28,12 @@ var bot = new Discord.Client({
 //MongoDB stuff
 const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mongodb.net/test"; //Database URI
 
-function pullDB(collection, receiver) {
+function pullDB(col, receiver) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
-            var collection = cli.db("datastore").collection(collection.toString());
+            var collection = cli.db("datastore").collection(col);
             collection.find({}).toArray(function (er, result) {
                 for (var r of result) {
                     try {
@@ -51,7 +51,7 @@ function pullDB(collection, receiver) {
     });
 }
 
-function pushDB(collection, sender, doWipe = false) {
+function pushDB(col, sender, doWipe = false) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, {
             useNewUrlParser: true
@@ -60,7 +60,7 @@ function pushDB(collection, sender, doWipe = false) {
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
                 reject();
             }
-            var collection = cli.db("datastore").collection(collection.toString());
+            var collection = cli.db("datastore").collection(col);
             if (doWipe)
                 collection.drop(function (error, delOK) {
                     if (error) console.log("DROP DB ERROR: " + JSON.stringify(error));
