@@ -139,7 +139,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 if (args[1] != null && findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) {
                     bot.sendMessage({
                         to: args[1] != 'id' ? channelID : args[2],
-                        message: (args[1] != 'id' ? message.slice(1) : message.slice(3))
+                        message: (args[1] != 'id' ? args.slice(1).join(' ') : args.slice(3).join(' '))
                     });
                 }
                 break;
@@ -148,8 +148,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
                 var helpInfo = [
                     [
-                        { trigger: 'x!help [<page #>]', desc: 'Makes this panel open, put in a specific page as an optional parameter' },
-                        { trigger: 'x!ping', desc: "Lets you test how fast the bot's server can respond to you without imploding" }
+                        { trigger: 'x!help [<page #>]', desc: 'Makes this panel open, put in a specific page as an optional parameter', restricted: false},
+                        { trigger: 'x!ping', desc: "Lets you test how fast the bot's server can respond to you without imploding", restricted: false}
                     ]
                 ];
 
