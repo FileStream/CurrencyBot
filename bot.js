@@ -87,13 +87,13 @@ bot.on('ready', async function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
     await pullDB("userdata", userData);
     await pullDB("serverdata", serverData);
-    for (u of Object.values(bot.users)) {
-        var data = userData[u.id];
-        if (!data) data = {};
+    for (u in bot.users) {
+        userData[u] = {};
+        var data = userData[u];
     }
-    for (s of Object.values(bot.servers)) {
-        var data = serverData[s.id];
-        if (!data) data = {};
+    for (s in bot.servers) {
+        serverData[s] = {};
+        var data = serverData[s];
         if (!data.prefix) data.prefix = "x!";
     }
     bot.setPresence({
