@@ -98,12 +98,12 @@ bot.on('ready', async function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 
     //Initialize data storage classes
-    for (u in bot.users) {
-       userData[u] = new User(u);
-    }
-    for (s in bot.servers) {
-        serverData[s] = new Server(s);
-    }
+        for (u in bot.users) {
+            userData[u] = new User(u);
+        }
+        for (s in bot.servers) {
+            serverData[s] = new Server(s);
+        }
 
     //Pull values from database
     await pullDB("userdata", userData).then({}, (res) => {
@@ -149,6 +149,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message != '') console.log(user + ': ' + message); //log all messages
 
     try {
+        if (!serverData[bot.channels[channelID].guild_id]) throw "Empty prefix";
         var pre = serverData[bot.channels[channelID].guild_id].prefix;
     } catch (err) {
         var pre = "x!";
