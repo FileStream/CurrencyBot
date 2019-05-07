@@ -92,7 +92,7 @@ bot.on('ready', async function (evt) {
         if (!data) data = {};
     }
     for (s of Object.values(bot.servers)) {
-        var data = data;
+        var data = serverData[s.id];
         if (!data) data = {};
         if (!data.prefix) data.prefix = "x!";
     }
