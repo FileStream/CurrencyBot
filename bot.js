@@ -91,6 +91,7 @@ bot.on('ready', async function (evt) {
     for (u in bot.users) {
         userData[u] = {};
         var data = userData[u];
+        if (!data.id) data.id = u;
     }
     for (s in bot.servers) {
         serverData[s] = {};
