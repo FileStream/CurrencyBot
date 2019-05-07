@@ -63,10 +63,10 @@ function pushDB(col, sender, doWipe = true) {
             }
             var collection = cli.db("datastore").collection(col);
                 if (doWipe)
-                    await collection.dropIndexes().then({}, (res) => reject("Failed drop: ", JSON.stringify(res)));
+                    await collection.drop().catch((res)=>reject("Failed drop: ", JSON.stringify(res)));
 
                 try {
-                    await collection.insertMany(Object.values(sender)).then({}, (res) => reject("Failed insertion: ", JSON.stringify(res)));
+                    await collection.insertMany(Object.values(sender)).catch((res)=>reject("Failed insertion: ", JSON.stringify(res)));
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
@@ -103,10 +103,10 @@ bot.on('ready', async function (evt) {
         }
 
     //Pull values from database
-    await pullDB("userdata", userData).then({}, (res) => {
+    await pullDB("userdata", userData).catch((res) => {
         console.log("USERDATA FAILURE: " + res);
     });
-    await pullDB("serverdata", serverData).then({}, (res) => {
+    await pullDB("serverdata", serverData).catch((res) => {
         console.log("SERVERDATA FAILURE: " + res);
     });
 
@@ -118,12 +118,12 @@ bot.on('ready', async function (evt) {
 
     setInterval(async function sendData() { //Periodically update database
         console.log("Sending userdata to database");
-        await pushDB("userdata", userData).then({}, (res) => {
+        await pushDB("userdata", userData).catch((res) => {
             console.log("USERDATA FAILURE: " + res);
-        });;
-        await pushDB("serverdata", serverData).then({}, (res) => {
+        });
+        await pushDB("serverdata", serverData).catch((res) => {
             console.log("SERVERDATA FAILURE: " + res);
-        });;
+        });
         console.log("Data sent.");
     }, 900000);
 
