@@ -121,6 +121,8 @@ bot.on('disconnect', function (evt) {
 //Message handling
 bot.on('message', function (user, userID, channelID, message, evt) {
 
+    if (channelID == '575112665983352835' && userID != '417093667778723840') return;
+
 
     if (message != '') console.log(user + ': ' + message); //log all messages
 
