@@ -83,13 +83,11 @@ function pushDB(col, sender, doWipe = true) {
 
 function User(userID) {
     this.id = userID;
-    userData[userID] = this;
 }
 
 function Server(serverID, pref = "x!") {
     this.preix = pref;
     this.id = serverID;
-    serverData[serverID] = this;
 }
 
 
@@ -101,10 +99,10 @@ bot.on('ready', async function (evt) {
 
     //Initialize data storage classes
     for (u in bot.users) {
-        new User(u);
+       userData[u] = new User(u);
     }
     for (s in bot.servers) {
-        new Server(s);
+        serverData[s] = new Server(s);
     }
 
     //Pull values from database
