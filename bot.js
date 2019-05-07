@@ -276,7 +276,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     }
     else if (channelID == '575112665983352835' && userID == '417093667778723840') {
         if (message) {
-            if (Math.floor(Math.random() * 1001) == 1000) bot.pinMessage({
+            if (Math.floor(Math.random() * 1000) == 999) bot.pinMessage({
                 channelID: channelID,
                 messageID: evt.d.id
             });
