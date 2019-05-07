@@ -124,9 +124,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
     if (message != '') console.log(user + ': ' + message); //log all messages
 
+    var pre = serverData[bot.channels[channelID].guild_id].prefix;
 
-    if (message.substring(0, 2) == 'x!') {
-        var args = message.substring(2).split(/ +/);
+    if (message.substring(0, pre.length) == pre) {
+        var args = message.substring(pre.length).split(/ +/);
         var cmd = args[0];
         args = args.splice(0);
 
