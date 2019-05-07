@@ -30,8 +30,8 @@ var bot = new Discord.Client({
 const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mongodb.net/test"; //Database URI
 
 function pullDB(col, receiver) {
-    return new Promise(async (resolve, reject) => {
-        MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
+    return new Promise((resolve, reject) => {
+        MongoClient.connect(uri, { useNewUrlParser: true }, async function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
             var collection = cli.db("datastore").collection(col);
@@ -53,10 +53,10 @@ function pullDB(col, receiver) {
 }
 
 function pushDB(col, sender, doWipe = true) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         MongoClient.connect(uri, {
             useNewUrlParser: true
-        }, function (err, cli) {
+        }, async function (err, cli) {
             if (err) {
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
                 reject();
