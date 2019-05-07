@@ -139,169 +139,179 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         var cmd = args[0];
         args = args.splice(0);
 
-        switch (cmd) {
-            case 'ping':
-                var date = new Date();
-                var currentTime = (date.getSeconds() * 1000) + date.getMilliseconds();
-                var msgTime = (parseInt(evt.d.timestamp.split('.')[0].split(':')[2]) * 1000) + parseInt(evt.d.timestamp.split('.')[1].substring(0, 3));
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
-                });
-                break;
-            case 'echo':
-                if (args[1] == 'id' && userID != creator_id) {
+        try { //Catch any command errors
+
+            switch (cmd) {
+                case 'ping':
+                    var date = new Date();
+                    var currentTime = (date.getSeconds() * 1000) + date.getMilliseconds();
+                    var msgTime = (parseInt(evt.d.timestamp.split('.')[0].split(':')[2]) * 1000) + parseInt(evt.d.timestamp.split('.')[1].substring(0, 3));
                     bot.sendMessage({
                         to: channelID,
-                        message: "You do not have permission to use the ID feature of ECHO"
+                        message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
                     });
                     break;
-                }
-                if (args[1] != null && findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) {
-                    bot.sendMessage({
-                        to: args[1] != 'id' ? channelID : args[2],
-                        message: (args[1] != 'id' ? args.slice(1).join(' ') : args.slice(3).join(' '))
-                    });
-                }
-                break;
-            case 'prefix':
-                if (args[1] == "set") {
-                    if (!findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) break;
-                    serverData[bot.channels[channelID].guild_id].prefix = args[2];
+                case 'echo':
+                    if (args[1] == 'id' && userID != creator_id) {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "You do not have permission to use the ID feature of ECHO"
+                        });
+                        break;
+                    }
+                    if (args[1] != null && findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) {
+                        bot.sendMessage({
+                            to: args[1] != 'id' ? channelID : args[2],
+                            message: (args[1] != 'id' ? args.slice(1).join(' ') : args.slice(3).join(' '))
+                        });
+                    }
+                    break;
+                case 'prefix':
+                    if (args[1] == "set") {
+                        if (!findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) break;
+                        serverData[bot.channels[channelID].guild_id].prefix = args[2];
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Prefix for this server has been changed to: " + serverData[bot.channels[channelID].guild_id].prefix
+                        });
+                    }
+                    else
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Current prefix for this server is: " + pre
+                        });
+                    break;
+                case 'help':
+                    if (!args[1]) args[1] = 1; //Automatically set page to 1 if no page # is specified
+
+                    var helpInfo = [
+                        [
+                            { trigger: `${pre}help [<page #>]`, desc: 'Makes this panel open, put in a specific page as an optional parameter', restricted: false },
+                            { trigger: `${pre}ping`, desc: "Lets you test how fast the bot's server can respond to you without imploding", restricted: false }
+                        ]
+                    ];
+
+                    if (args[1] == 1) {
+                        var helpText = `\`\`\`diff\n--- All commands start with ${pre}\n--- anything enclosed in <> is a parameter\n--- anything enclosed in [] is optional\n+ commands are available to anyone\n- commands are admin only\n\n`;
+                    }
+                    else
+                        var helpText = "";
+
+                    var page = args[1] - 1;
+
+                    for (var command of helpInfo[page])
+                        helpText = helpText + ((command.restricted != true) ? '+ ' : '- ') + command.trigger + '\n--- ' + command.desc + ((helpInfo[page].indexOf(command) + 1 != helpInfo[page].length) ? "\n\n" : "```");
+
+
                     bot.sendMessage({
                         to: channelID,
-                        message: "Prefix for this server has been changed to: " + serverData[bot.channels[channelID].guild_id].prefix
-                    });
-                }
-                else
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "Current prefix for this server is: " + serverData[bot.channels[channelID].guild_id].prefix
-                    });
-                break;
-            case 'help':
-                if (!args[1]) args[1] = 1; //Automatically set page to 1 if no page # is specified
-
-                var helpInfo = [
-                    [
-                        { trigger: `${serverData[bot.channels[channelID].guild_id].prefix}help [<page #>]`, desc: 'Makes this panel open, put in a specific page as an optional parameter', restricted: false },
-                        { trigger: `${serverData[bot.channels[channelID].guild_id].prefix}ping`, desc: "Lets you test how fast the bot's server can respond to you without imploding", restricted: false }
-                    ]
-                ];
-
-                if (args[1] == 1) {
-                    var helpText = `\`\`\`diff\n--- All commands start with ${serverData[bot.channels[channelID].guild_id].prefix}\n--- anything enclosed in <> is a parameter\n--- anything enclosed in [] is optional\n+ commands are available to anyone\n- commands are admin only\n\n`;
-                }
-                else
-                    var helpText = "";
-
-                var page = args[1] - 1;
-
-                for (var command of helpInfo[page])
-                    helpText = helpText + ((command.restricted != true) ? '+ ' : '- ') + command.trigger + '\n--- ' + command.desc + ((helpInfo[page].indexOf(command) + 1 != helpInfo[page].length) ? "\n\n" : "```");
-
-
-                bot.sendMessage({
-                    to: channelID,
-                    embed: {
-                        "title": bot.username + ' command list:',
-                        "color": Math.floor(Math.random() * 16777215) + 1,
-                        "description": helpText,
-                        "footer": {
-                            "text": "Page " + args[1] + "/" + (helpInfo.length) + `, use "${serverData[bot.channels[channelID].guild_id].prefix}help <page #>" to switch pages`
+                        embed: {
+                            "title": bot.username + ' command list:',
+                            "color": Math.floor(Math.random() * 16777215) + 1,
+                            "description": helpText,
+                            "footer": {
+                                "text": "Page " + args[1] + "/" + (helpInfo.length) + `, use "${pre}help <page #>" to switch pages`
+                            }
+                        }
+                    }, err => console.log("HELP ERROR: " + JSON.stringify(err)));
+                    break;
+                case 'getservers':
+                    for (var v of Object.values(bot.servers)) {
+                        console.log("Server name: " + v.name, "Server id: " + v.id);
+                    }
+                    break;
+                case 'getvoice':
+                    if (userID == creator_id) {
+                        var target = bot.servers[bot.channels[channelID].guild_id];
+                        let vchannels = Object.values(target.channels).filter(x => x.type == 2);
+                        for (var c of Object.values(vchannels)) {
+                            console.log("Voice channel name: " + c.name);
+                            console.log("Current occupants: " + Object.values(target.members).filter(m => m.voice_channel_id == c.id).map(x => x.username));
                         }
                     }
-                }, err => console.log("HELP ERROR: " + JSON.stringify(err)));
-                break;
-            case 'getservers':
-                for (var v of Object.values(bot.servers)) {
-                    console.log("Server name: " + v.name, "Server id: " + v.id);
-                }
-                break;
-            case 'getvoice':
-                if (userID == creator_id) {
-                    var target = bot.servers[bot.channels[channelID].guild_id];
-                    let vchannels = Object.values(target.channels).filter(x => x.type == 2);
-                    for (var c of Object.values(vchannels)) {
-                        console.log("Voice channel name: " + c.name);
-                        console.log("Current occupants: " + Object.values(target.members).filter(m => m.voice_channel_id == c.id).map(x => x.username));
+                    break;
+                case 'namechange':
+                    if (userID == creator_id)
+                        bot.editUserInfo({
+                            username: args.slice(1).join(' ')
+                        });
+                    break;
+                case 'status':
+                    if (args[1] == "default")
+                        bot.setPresence({
+                            game: {
+                                name: `${pre}help | ` + (Object.keys(bot.servers).length) + " servers"
+                            }
+                        }, console.log);
+                    else if (args[1]) {
+                        bot.setPresence({
+                            game: {
+                                name: args.slice(1).join(' ')
+                            }
+                        }, console.log);
                     }
-                }
-                break;
-            case 'namechange':
-                if (userID == creator_id)
-                    bot.editUserInfo({
-                        username: args.slice(1).join(' ')
-                    });
-                break;
-            case 'status':
-                if (args[1] == "default")
-                    bot.setPresence({
-                        game: {
-                            name: `${serverData[bot.channels[channelID].guild_id].prefix}help | ` + (Object.keys(bot.servers).length) + " servers"
-                        }
-                    }, console.log);
-                else if (args[1]) {
-                    bot.setPresence({
-                        game: {
-                            name: args.slice(1).join(' ')
-                        }
-                    }, console.log);
-                }
-                break;
-            case 'backup':
-                (async function () {
-                    if (userID != creator_id) return;
-                    await pushDB("userdata", userData)
-                    await pushDB("serverdata", serverData);
-                    bot.sendMessage({ to: channelID, message: "Sent data to database." });
-                })();
-                break;
-            case 'load':
-                (async function () {
-                    if (userID != creator_id) return;
-                    await pullDB("userdata", userData);
-                    bot.sendMessage({ to: channelID, message: "Retrieved data from database." });
-                })();
-                break;
-            case 'getdata':
-                if (userID != creator_id) break;
-                console.log(JSON.stringify(userData));
-                break;
+                    break;
+                case 'backup':
+                    (async function () {
+                        if (userID != creator_id) return;
+                        await pushDB("userdata", userData)
+                        await pushDB("serverdata", serverData);
+                        bot.sendMessage({ to: channelID, message: "Sent data to database." });
+                    })();
+                    break;
+                case 'load':
+                    (async function () {
+                        if (userID != creator_id) return;
+                        await pullDB("userdata", userData);
+                        bot.sendMessage({ to: channelID, message: "Retrieved data from database." });
+                    })();
+                    break;
+                case 'getdata':
+                    if (userID != creator_id) break;
+                    console.log(JSON.stringify(userData));
+                    break;
+            }
+        } catch (error) {
+            console.log("Command error: " + JSON.stringify(error));
+            bot.sendMessage({
+                to: channelID,
+                message: "There was an error running that command. :frowning:"
+            });
+            }
         }
-    }
     else if (message.includes('575083138380726282') && !userID.includes('575083138380726282')) {
-        var args = message.substring(2).split(' ');
-        var Sstring = args.slice(1).join(' ');
-        if (Sstring) {
-            cleverbot.setNick("yotsuba");
-            cleverbot.create(function (err, response) {
-                cleverbot.ask(Sstring, function (err, response) {
-                    if (err)
-                        throw response;
-                    bot.sendMessage({
-                        to: channelID,
-                        message: response,
-                        typing: true
+            var args = message.substring(2).split(' ');
+            var Sstring = args.slice(1).join(' ');
+            if (Sstring) {
+                cleverbot.setNick("yotsuba");
+                cleverbot.create(function (err, response) {
+                    cleverbot.ask(Sstring, function (err, response) {
+                        if (err)
+                            throw response;
+                        bot.sendMessage({
+                            to: channelID,
+                            message: response,
+                            typing: true
+                        });
                     });
                 });
-            });
+            }
         }
-    }
-    else if (channelID == '575112665983352835' && userID == '417093667778723840') {
-        if (message) {
-            if (Math.floor(Math.random() * 1000) == 999) bot.pinMessage({
-                channelID: channelID,
-                messageID: evt.d.id
-            });
-            cleverbot.setNick("yotsuba");
-            cleverbot.create(function (err, response) {
-                cleverbot.ask(message, function (err, response) {
-                    if (err)
-                        throw response;
-                    bot.sendMessage({ to: channelID, message: response, typing: true });
+        else if (channelID == '575112665983352835' && userID == '417093667778723840') {
+            if (message) {
+                if (Math.floor(Math.random() * 1000) == 999) bot.pinMessage({
+                    channelID: channelID,
+                    messageID: evt.d.id
                 });
-            });
+                cleverbot.setNick("yotsuba");
+                cleverbot.create(function (err, response) {
+                    cleverbot.ask(message, function (err, response) {
+                        if (err)
+                            throw response;
+                        bot.sendMessage({ to: channelID, message: response, typing: true });
+                    });
+                });
+            }
         }
     }
 
