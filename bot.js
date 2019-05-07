@@ -156,10 +156,21 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     });
                 }
                 break;
-            case 'setprefix': {
-                if (!findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) break;
-                serverData[bot.channels[channelID].guild_id].prefix = args[1];
-            }
+            case 'prefix':
+                if (args[1] == "set") {
+                    if (!findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) break;
+                    serverData[bot.channels[channelID].guild_id].prefix = args[2];
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "Prefix for this server has been changed to: " + serverData[bot.channels[channelID].guild_id].prefix
+                    });
+                }
+                else
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "Current prefix for this server is: " + serverData[bot.channels[channelID].guild_id].prefix
+                    });
+                break;
             case 'help':
                 if (!args[1]) args[1] = 1; //Automatically set page to 1 if no page # is specified
 
