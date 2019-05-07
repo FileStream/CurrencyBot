@@ -10,6 +10,7 @@ const creator_id = '175711685682659328';
 //Set global mutables
 var pageHolder = {};
 var userData = {}; //All user data, USERIDs are keys
+var serverData = {};
 
 
 // Configure logger settings
@@ -85,6 +86,16 @@ bot.on('ready', async function (evt) {
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
     await pullDB("userdata", userData);
+    await pullDB("serverdata", serverData);
+    for (u of Object.values(bot.users)) {
+        var data = userData[u.id];
+        if (!data) data = {};
+    }
+    for (s of Object.values(bot.servers)) {
+        var data = data;
+        if (!data) data = {};
+        if (!data.prefix) data.prefix = "x!";
+    }
     bot.setPresence({
         game: {
             name: "x!help | " + (Object.keys(bot.servers).length) + " servers"
@@ -93,6 +104,7 @@ bot.on('ready', async function (evt) {
     setInterval(async function sendData() { //Periodically update database
         console.log("Sending userdata to database");
         await pushDB("userdata", userData);
+        await pushDB("serverdata", serverData);
         console.log("Data sent.");
     }, 900000);
 
@@ -143,18 +155,22 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     });
                 }
                 break;
+            case 'setprefix': {
+                if (!findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) break;
+                serverData[bot.channels[channelID].guild_id].prefix = args[1];
+            }
             case 'help':
                 if (!args[1]) args[1] = 1; //Automatically set page to 1 if no page # is specified
 
                 var helpInfo = [
                     [
-                        { trigger: 'x!help [<page #>]', desc: 'Makes this panel open, put in a specific page as an optional parameter', restricted: false},
-                        { trigger: 'x!ping', desc: "Lets you test how fast the bot's server can respond to you without imploding", restricted: false}
+                        { trigger: `${serverData[bot.channels[channelID].guild_id].prefix}help [<page #>]`, desc: 'Makes this panel open, put in a specific page as an optional parameter', restricted: false },
+                        { trigger: `${serverData[bot.channels[channelID].guild_id].prefix}ping`, desc: "Lets you test how fast the bot's server can respond to you without imploding", restricted: false }
                     ]
                 ];
 
                 if (args[1] == 1) {
-                    var helpText = "```diff\n--- All commands start with x!\n--- anything enclosed in <> is a parameter\n--- anything enclosed in [] is optional\n+ commands are available to anyone\n- commands are admin only\n\n";
+                    var helpText = `\`\`\`diff\n--- All commands start with ${serverData[bot.channels[channelID].guild_id].prefix}\n--- anything enclosed in <> is a parameter\n--- anything enclosed in [] is optional\n+ commands are available to anyone\n- commands are admin only\n\n`;
                 }
                 else
                     var helpText = "";
@@ -172,10 +188,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         "color": Math.floor(Math.random() * 16777215) + 1,
                         "description": helpText,
                         "footer": {
-                            "text": "Page " + args[1] + "/" + (helpInfo.length) + ', use "x!help <page #>" to switch pages'
+                            "text": "Page " + args[1] + "/" + (helpInfo.length) + `, use "${serverData[bot.channels[channelID].guild_id].prefix}help <page #>" to switch pages`
                         }
                     }
-                });
+                }, err => console.log("HELP ERROR: " + JSON.stringify(err)));
                 break;
             case 'getservers':
                 for (var v of Object.values(bot.servers)) {
@@ -202,7 +218,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 if (args[1] == "default")
                     bot.setPresence({
                         game: {
-                            name: "x!help | " + (Object.keys(bot.servers).length) + " servers"
+                            name: `${serverData[bot.channels[channelID].guild_id].prefix}help | ` + (Object.keys(bot.servers).length) + " servers"
                         }
                     }, console.log);
                 else if (args[1]) {
