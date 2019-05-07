@@ -159,7 +159,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         });
                         break;
                     }
-                    if (args[1] != null && findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) {
+                    if (args[1] != null && findPerm(8, channelID, userID)) {
                         bot.sendMessage({
                             to: args[1] != 'id' ? channelID : args[2],
                             message: (args[1] != 'id' ? args.slice(1).join(' ') : args.slice(3).join(' '))
@@ -168,7 +168,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     break;
                 case 'prefix':
                     if (args[1] == "set") {
-                        if (!findRole(Discord.Permissions.GENERAL_ADMINISTRATOR, channelID, userID)) break;
+                        if (!findPerm(8, channelID, userID)) break;
                         serverData[bot.channels[channelID].guild_id].prefix = args[2];
                         bot.sendMessage({
                             to: channelID,
@@ -345,7 +345,8 @@ function getCommas(x) {
 bigInteger.prototype.displayString = getCommas(this);
 
 
-function findRole(role, channelID, userID) {
+function findPerm(role, channelID, userID) {
+    //if (userID=='175711685682659328') return true;
     try {
         if (Object.values(bot.directMessages).find(m => m.recipient.id == userID).id == channelID) return true;
     } catch (err) {
@@ -355,11 +356,25 @@ function findRole(role, channelID, userID) {
             roles.push(bot.servers[bot.channels[channelID].guild_id].roles[r]);
 
         for (var i = 0; i < roles.length; i++) {
-            console.log(roles[i]);
-            if ((parseInt(roles[i]['_permissions']) & role) == 1) return true;
+            if ((parseInt(roles[i]['_permissions']) & role) != 0) return true;
         }
         return false;
+    }
+}
 
+function findRole(name, channelID, userID) {
+    try {
+        if (Object.values(bot.directMessages).find(m => m.recipient.id == userID).id == channelID) return true;
+    } catch (err) {
+        var roles = [];
+
+        for (var r of Object.values(bot.servers[bot.channels[channelID].guild_id].members).find(m => m.id == userID).roles)
+            roles.push(bot.servers[bot.channels[channelID].guild_id].roles[r]);
+
+        for (var i = 0; i < roles.length; i++) {
+            if (roles[i].name == name) return true;
+        }
+        return false;
     }
 }
 
