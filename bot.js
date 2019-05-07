@@ -68,6 +68,9 @@ function pushDB(col, sender, doWipe = false) {
                 });
             for (u in sender)
                 try {
+                    collection.drop(function (err, delOK) {
+                        if (err) { }
+                    });
                     collection.insert(sender[u]);
                 }
                 catch (error) {
@@ -126,7 +129,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
     if (message != '') console.log(user + ': ' + message); //log all messages
 
-    var pre = serverData[bot.channels[channelID].guild_id].prefix;
+    try {
+        if (Object.values(bot.directMessages).find(m => m.recipient.id == userID).id == channelID)
+            var pre = "x!";
+    } catch (err) {
+        var pre = serverData[bot.channels[channelID].guild_id].prefix;
+    }
 
     if (message.substring(0, pre.length) == pre) {
         var args = message.substring(pre.length).split(/ +/);
