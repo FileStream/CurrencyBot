@@ -113,6 +113,8 @@ bot.on('ready', async function (evt) {
         console.log("SERVERDATA FAILURE: " + res);
     });
 
+    console.log("SERVER DATA: " + JSON.stringify(serverData));
+
     bot.setPresence({
         game: {
             name: "x!help | " + (Object.keys(bot.servers).length) + " servers"
@@ -149,7 +151,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message != '') console.log(user + ': ' + message); //log all messages
 
     try {
-        if (!serverData[bot.channels[channelID].guild_id]) throw "Empty prefix";
         var pre = serverData[bot.channels[channelID].guild_id].prefix;
     } catch (err) {
         var pre = "x!";
