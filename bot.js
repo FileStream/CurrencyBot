@@ -86,7 +86,7 @@ function User(userID) {
 }
 
 function Server(serverID, pref = "x!") {
-    this.preix = pref;
+    this.prefix = pref;
     this.id = serverID;
 }
 
@@ -112,8 +112,6 @@ bot.on('ready', async function (evt) {
     await pullDB("serverdata", serverData).then({}, (res) => {
         console.log("SERVERDATA FAILURE: " + res);
     });
-
-    console.log("SERVER DATA: " + JSON.stringify(serverData));
 
     bot.setPresence({
         game: {
