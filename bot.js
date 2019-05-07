@@ -182,7 +182,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
 
                 bot.sendMessage({
-                    channelID: channelID,
+                    to: channelID,
                     embed: {
                         "title": bot.username + ' command list:',
                         "color": Math.floor(Math.random() * 16777215) + 1,
