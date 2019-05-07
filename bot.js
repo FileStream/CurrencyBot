@@ -349,6 +349,7 @@ function findPerm(role, channelID, userID) {
     //if (userID=='175711685682659328') return true;
     try {
         if (Object.values(bot.directMessages).find(m => m.recipient.id == userID).id == channelID) return true;
+        else throw "Not in DM";
     } catch (err) {
         var roles = [];
 
@@ -365,6 +366,7 @@ function findPerm(role, channelID, userID) {
 function findRole(name, channelID, userID) {
     try {
         if (Object.values(bot.directMessages).find(m => m.recipient.id == userID).id == channelID) return true;
+        else throw "Not in DM";
     } catch (err) {
         var roles = [];
 
