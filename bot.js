@@ -63,9 +63,7 @@ function pushDB(col, sender, doWipe = true) {
             }
             var collection = cli.db("datastore").collection(col);
             if (doWipe)
-                await collection.dropIndexes((error)=>{
-                    if (error) console.log("DROP DB ERROR: " + JSON.stringify(error)).then({}, (res)=>reject("Failed drop: ",res));
-                });
+                await collection.dropIndexes().then({}, (res)=>reject("Failed drop: ",res));
 
                 try {
                     await collection.insertMany(Object.values(sender)).then({},(res)=>reject("Failed insertion: ",res));
