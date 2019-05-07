@@ -29,13 +29,13 @@ var bot = new Discord.Client({
 //MongoDB stuff
 const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mongodb.net/test"; //Database URI
 
-function pullDB(col, receiver) {
+async function pullDB(col, receiver) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
             var collection = cli.db("datastore").collection(col);
-            collection.find({}).toArray(function (er, result) {
+            await collection.find({}).toArray(function (er, result) {
                 for (var r in result) {
                     try {
                         receiver[r.id] = r;
@@ -45,14 +45,14 @@ function pullDB(col, receiver) {
                         reject();
                     }
                 }
-            });
+            }).then({},reject("Failed to receive documents"));
             cli.close();
             resolve();
         });
     });
 }
 
-function pushDB(col, sender, doWipe = true) {
+async function pushDB(col, sender, doWipe = true) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, {
             useNewUrlParser: true
@@ -69,7 +69,7 @@ function pushDB(col, sender, doWipe = true) {
 
             for (u in sender)
                 try {
-                    collection.bulkWrite(sender);
+                    await collection.insertMany(Object.values(sender)).then({},reject("Failed insertion"));
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
@@ -81,22 +81,34 @@ function pushDB(col, sender, doWipe = true) {
     });
 }
 
+function User(userID) {
+    this.id = userID;
+    userData[userID] = this;
+}
+
+function Server(serverID, pref = "x!") {
+    this.preix = pref;
+    this.id = serverID;
+    serverData[serverID] = this;
+}
+
+
 //Log bot bootup and start various sheduled tasks
 bot.on('ready', async function (evt) {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
-    await pullDB("userdata", userData);
-    await pullDB("serverdata", serverData);
+    await pullDB("userdata", userData).then({}, (res) => {
+        console.log("USERDATA FAILURE: " + res);
+    });
+    await pullDB("serverdata", serverData).then({}, (res) => {
+        console.log("SERVERDATA FAILURE: " + res);
+    });
     for (u in bot.users) {
-        userData[u] = {};
-        var data = userData[u];
-        if (!data.id) data.id = u;
+        new User(u);
     }
     for (s in bot.servers) {
-        serverData[s] = {};
-        var data = serverData[s];
-        if (!data.prefix) data.prefix = "x!";
+        new Server(s);
     }
     bot.setPresence({
         game: {
@@ -105,8 +117,12 @@ bot.on('ready', async function (evt) {
     }, console.log);
     setInterval(async function sendData() { //Periodically update database
         console.log("Sending userdata to database");
-        await pushDB("userdata", userData);
-        await pushDB("serverdata", serverData);
+        await pushDB("userdata", userData).then({}, (res) => {
+            console.log("USERDATA FAILURE: " + res);
+        });;
+        await pushDB("serverdata", serverData).then({}, (res) => {
+            console.log("SERVERDATA FAILURE: " + res);
+        });;
         console.log("Data sent.");
     }, 900000);
 
