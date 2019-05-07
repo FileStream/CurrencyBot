@@ -98,23 +98,29 @@ bot.on('ready', async function (evt) {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
-    await pullDB("userdata", userData).then({}, (res) => {
-        console.log("USERDATA FAILURE: " + res);
-    });
-    await pullDB("serverdata", serverData).then({}, (res) => {
-        console.log("SERVERDATA FAILURE: " + res);
-    });
+
+    //Initialize data storage classes
     for (u in bot.users) {
         new User(u);
     }
     for (s in bot.servers) {
         new Server(s);
     }
+
+    //Pull values from database
+    await pullDB("userdata", userData).then({}, (res) => {
+        console.log("USERDATA FAILURE: " + res);
+    });
+    await pullDB("serverdata", serverData).then({}, (res) => {
+        console.log("SERVERDATA FAILURE: " + res);
+    });
+
     bot.setPresence({
         game: {
             name: "x!help | " + (Object.keys(bot.servers).length) + " servers"
         }
     }, console.log);
+
     setInterval(async function sendData() { //Periodically update database
         console.log("Sending userdata to database");
         await pushDB("userdata", userData).then({}, (res) => {
