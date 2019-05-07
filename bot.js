@@ -130,10 +130,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message != '') console.log(user + ': ' + message); //log all messages
 
     try {
-        if (Object.values(bot.directMessages).find(m => m.recipient.id == userID).id == channelID)
-            var pre = "x!";
-    } catch (err) {
         var pre = serverData[bot.channels[channelID].guild_id].prefix;
+    } catch (err) {
+        var pre = "x!";
     }
 
     if (message.substring(0, pre.length) == pre) {
