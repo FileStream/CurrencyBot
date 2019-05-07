@@ -36,7 +36,7 @@ function pullDB(col, receiver) {
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
             var collection = cli.db("datastore").collection(col);
             collection.find({}).toArray(function (er, result) {
-                for (var r of result) {
+                for (var r in result) {
                     try {
                         receiver[r.id] = r;
                     }
