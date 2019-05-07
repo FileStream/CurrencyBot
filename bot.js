@@ -271,8 +271,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 case 'backup':
                     (async function () {
                         if (userID != creator_id) return;
-                        await pushDB("userdata", userData)
-                        await pushDB("serverdata", serverData);
+                        await pushDB("userdata", userData).catch((res) => {
+                            console.log("USERDATA FAILURE: " + res);
+                        });
+                        await pushDB("serverdata", serverData).catch((res) => {
+                            console.log("SERVERDATA FAILURE: " + res);
+                        });
                         bot.sendMessage({ to: channelID, message: "Sent data to database." });
                     })();
                     break;
