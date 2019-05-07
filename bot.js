@@ -52,7 +52,7 @@ function pullDB(col, receiver) {
     });
 }
 
-function pushDB(col, sender, doWipe = false) {
+function pushDB(col, sender, doWipe = true) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, {
             useNewUrlParser: true
@@ -66,11 +66,9 @@ function pushDB(col, sender, doWipe = false) {
                 collection.drop(function (error, delOK) {
                     if (error) console.log("DROP DB ERROR: " + JSON.stringify(error));
                 });
+
             for (u in sender)
                 try {
-                    collection.drop(function (err, delOK) {
-                        if (err) { }
-                    });
                     collection.insert(sender[u]);
                 }
                 catch (error) {
@@ -255,6 +253,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     if (userID != creator_id) return;
                     await pushDB("userdata", userData)
                     bot.sendMessage({ to: channelID, message: "Sent data to database." });
+                })();
+                break;
+            case 'load':
+                (async function () {
+                    if (userID != creator_id) return;
+                    await pullDB("userdata", userData);
+                    bot.sendMessage({ to: channelID, message: "Retrieved data from database." });
                 })();
                 break;
             case 'getdata':
