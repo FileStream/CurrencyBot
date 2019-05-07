@@ -68,7 +68,7 @@ function pushDB(col, sender, doWipe = false) {
                 });
             for (u in sender)
                 try {
-                    collection.insert(JSON.stringify(sender[u]));
+                    collection.insert(sender[u]);
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
