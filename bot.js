@@ -31,11 +31,11 @@ const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mon
 
 function pullDB(col, receiver) {
     return new Promise((resolve, reject) => {
-        MongoClient.connect(uri, { useNewUrlParser: true }, async function (err, cli) {
+        MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
             var collection = cli.db("datastore").collection(col);
-            await collection.find({}).toArray(function (er, result) {
+            collection.find({}).toArray(function (er, result) {
                 for (var r in result) {
                     try {
                         receiver[r.id] = r;
@@ -45,7 +45,7 @@ function pullDB(col, receiver) {
                         reject();
                     }
                 }
-            }).then({},reject("Failed to receive documents"));
+            });
             cli.close();
             resolve();
         });
