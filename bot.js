@@ -67,7 +67,6 @@ function pushDB(col, sender, doWipe = true) {
                     if (error) console.log("DROP DB ERROR: " + JSON.stringify(error)).then({}, reject("Failed drop"));
                 });
 
-            for (u in sender)
                 try {
                     await collection.insertMany(Object.values(sender)).then({},reject("Failed insertion"));
                 }
