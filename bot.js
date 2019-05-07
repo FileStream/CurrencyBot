@@ -272,7 +272,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             });
         }
     }
-    else if (channelID == '575078510876688404' && userID == '417093667778723840') {
+    else if (channelID == '575112665983352835' && userID == '417093667778723840') {
         if (message) {
             cleverbot.setNick("yotsuba");
             cleverbot.create(function (err, response) {
