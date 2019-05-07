@@ -63,7 +63,7 @@ function pushDB(col, sender, doWipe = true) {
             }
             var collection = cli.db("datastore").collection(col);
             if (doWipe)
-                await dropAllIndexes((error)=>{
+                await collection.dropIndexes((error)=>{
                     if (error) console.log("DROP DB ERROR: " + JSON.stringify(error)).then({}, reject("Failed drop"));
                 });
 
