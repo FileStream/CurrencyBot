@@ -403,13 +403,13 @@ function spliceSlice(str, index, add) {
     return str.slice(0, index) + (add || "") + str.slice(index, str.length - 1);
 }
 
-function getCommas(x) {
-    var parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
-}
+//function getCommas(x) {
+//    var parts = x.toString().split(".");
+//    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+//    return parts.join(".");
+//}
 
-bigInteger.prototype.displayString = getCommas(this);
+//BigInt.prototype.displayString = getCommas(this);
 
 
 function findPerm(role, channelID, userID) {
