@@ -40,7 +40,8 @@ function pullDB(col, receiver) {
                    }
                    for (var r of result) {
                        try {
-                           receiver[r.id] = r;
+                           for (p in receiver[r.id])
+                           receiver[r.id][p] = r[p];
                        }
                        catch (error) {
                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
@@ -117,7 +118,7 @@ function send(sender, receiver, amount) {
         receiver.money = (receiverMoney + amount).toString();
         sender.transactions.push(new Transaction(amount.toString(), transactionTypes.SEND));
         receiver.transactions.push(new Transaction(amount.toString(), transactionTypes.RECEIVE));
-        resolve(`Succesfully transfered $${BigInt(amount).toLocaleString("en-US")} from your account to ${bot.users[receiver.id].username}'s account.`);
+        res(`Succesfully transfered $${BigInt(amount).toLocaleString("en-US")} from your account to ${bot.users[receiver.id].username}'s account.`);
     });
 }
 
