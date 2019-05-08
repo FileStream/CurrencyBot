@@ -111,9 +111,9 @@ function Server(serverID, pref = "x!") {
 function send(sender, receiver, amount) {
     return new Promise((res, rej) => {
         amount = BigInt(amount);
-        if (senderMoney < amount) rej("You cannot send more money than you have in your balance!");
         var senderMoney = BigInt(sender.money);
         var receiverMoney = BigInt(sender.money);
+        if (senderMoney < amount) rej("You cannot send more money than you have in your balance!");
         sender.money = (senderMoney - amount).toString();
         receiver.money = (receiverMoney + amount).toString();
         sender.transactions.push(new Transaction(amount.toString(), transactionTypes.SEND));
