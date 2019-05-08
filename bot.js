@@ -36,7 +36,7 @@ function pullDB(col, receiver) {
                 console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
             var collection = cli.db("datastore").collection(col);
             collection.find({}).toArray(function (er, result) {
-                for (var r in result) {
+                for (var r of result) {
                     try {
                         receiver[r.id] = r;
                     }
@@ -283,7 +283,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 case 'load':
                     (async function () {
                         if (userID != creator_id) return;
-                        await pullDB("userdata", userData);
+                        await pullDB("userdata", userData).catch((res) => {
+                            console.log("USERDATA FAILURE: " + res);
+                        });;
                         bot.sendMessage({ to: channelID, message: "Retrieved data from database." });
                     })();
                     break;
