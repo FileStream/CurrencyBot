@@ -31,31 +31,26 @@ const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mon
 
 function pullDB(col, receiver) {
     return new Promise((resolve, reject) => {
-        MongoClient.connect(uri, { useNewUrlParser: true }).then(async function (err, cli) {
+       MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + err.message);
             var collection = cli.db("datastore").collection(col);
-            await new Promise((res, rej) => {
-                collection.find({}).toArray(function (er, result) {
-                    if (er) {
-                        console.log("TOARRAY ERROR: " + er.message);
-                        rej();
-                    }
-                    for (var r in result) {
-                        try {
-                            receiver[r.id] = r;
-                        }
-                        catch (error) {
-                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
-                            rej();
-                        }
-                    }
-                });
-                res();
-            }).catch(reject);
-            cli.close();
-            resolve();
-        }, reject);
+               collection.find().toArray(function (er, result) {
+                   if (er) {
+                       console.log("TOARRAY ERROR: " + er.message);
+                   }
+                   for (var r of result) {
+                       try {
+                           receiver[r.id] = r;
+                       }
+                       catch (error) {
+                           console.log("ERROR ON DB PULL: " + JSON.stringify(error));
+                       }
+                   }
+                   cli.close();
+                   resolve();
+           });
+        });
     });
 }
 
@@ -79,8 +74,8 @@ function pushDB(col, sender, doWipe = true) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
                     reject();
                 }
-            cli.close();
-            resolve();
+                resolve();
+                cli.close();
         });
     });
 }
