@@ -33,11 +33,11 @@ function pullDB(col, receiver) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
-                console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
+                console.log("MONGODB CONNECTION ERROR: " + err.message);
             var collection = cli.db("datastore").collection(col);
             collection.find({}).toArray(function (er, result) {
                 if (er) {
-                    console.log("TOARRAY ERROR: " + JSON.stringify(er));
+                    console.log("TOARRAY ERROR: " + er.message);
                 }
                 for (var r in result) {
                     try {
@@ -60,8 +60,8 @@ function pushDB(col, sender, doWipe = true) {
         MongoClient.connect(uri, {
             useNewUrlParser: true
         }, async function (err, cli) {
-            if (err) {
-                console.log("MONGODB CONNECTION ERROR: " + JSON.stringify(err));
+                if (err) {
+                    console.log("MONGODB CONNECTION ERROR: " + err.message);
                 reject();
             }
             var collection = cli.db("datastore").collection(col);
