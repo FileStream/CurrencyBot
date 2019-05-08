@@ -145,6 +145,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (channelID == '575112665983352835' && userID != '417093667778723840') return;
 
 
+    message = message.replace(/@+(everyone|here)/g, "");
+
+
     if (message != '') console.log(user + ': ' + message); //log all messages
 
     try {
