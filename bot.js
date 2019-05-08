@@ -4,7 +4,6 @@ var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
-var bigInteger = require('biginteger').BigInteger; //Handle arbitrarily large numbers
 const creator_id = '175711685682659328';
 
 //Set global mutables
@@ -80,13 +79,46 @@ function pushDB(col, sender, doWipe = true) {
     });
 }
 
+//Define working objects
+
+const transactionTypes = {
+    SEND: 1,
+    RECEIVE: 2,
+    TRANSFER: 3,
+    DEPOSIT: 4,
+    WITHDRAW: 5
+};
+
+function Transaction(amount, transactionType, options = {}) {
+    this.amount = amount;
+    this.type = transactionType;
+    this.options = options;
+}
+
 function User(userID) {
     this.id = userID;
+    this.money = "0";
+    this.transactions = [];
 }
 
 function Server(serverID, pref = "x!") {
     this.prefix = pref;
     this.id = serverID;
+    this.transactions = [];
+}
+
+function send(sender, receiver, amount) {
+    return new Promise((res, rej) => {
+        amount = BigInt(amount);
+        if (senderMoney < amount) rej("You cannot send more money than you have in your balance!");
+        var senderMoney = BigInt(sender.money);
+        var receiverMoney = BigInt(sender.money);
+        sender.money = (senderMoney - amount).toString();
+        receiver.money = (receiverMoney + amount).toString();
+        sender.transactions.push(new Transaction(amount.toString(), transactionTypes.SEND));
+        receiver.transactions.push(new Transaction(amount.toString(), transactionTypes.RECEIVE));
+        resolve(`Succesfully transfered $${BigInt(amount).toLocaleString("en-US")} from your account to ${bot.users[receiver.id].username}'s account.`);
+    });
 }
 
 
@@ -172,6 +204,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         to: channelID,
                         message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
                     });
+                    break;
+                case 'send':
+                    (async function () {
+                        send(userData[userID], userData[args[1]], args[2]).then(msg =>
+                            bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
+                                bot.sendMessage({ to: channelID, message: msg }));
+                    })();
                     break;
                 case 'echo':
                     if (args[1] == 'id' && userID != creator_id) {
