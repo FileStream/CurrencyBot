@@ -41,7 +41,7 @@ function pullDB(col, receiver) {
                    for (var r of result) {
                        try {
                            for (p in receiver[r.id])
-                           receiver[r.id][p] = r[p];
+                               if (r[p] != undefined) receiver[r.id][p] = r[p];
                        }
                        catch (error) {
                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
