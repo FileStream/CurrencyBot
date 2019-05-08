@@ -35,20 +35,24 @@ function pullDB(col, receiver) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + err.message);
             var collection = cli.db("datastore").collection(col);
-            collection.find({}).toArray(function (er, result) {
-                if (er) {
-                    console.log("TOARRAY ERROR: " + er.message);
-                }
-                for (var r in result) {
-                    try {
-                        receiver[r.id] = r;
+            await new Promise((res, rej) => {
+                collection.find({}).toArray(function (er, result) {
+                    if (er) {
+                        console.log("TOARRAY ERROR: " + er.message);
+                        rej();
                     }
-                    catch (error) {
-                        console.log("ERROR ON DB PULL: " + JSON.stringify(error));
-                        reject();
+                    for (var r in result) {
+                        try {
+                            receiver[r.id] = r;
+                        }
+                        catch (error) {
+                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
+                            rej();
+                        }
                     }
-                }
-            });
+                });
+                res();
+            }).catch(reject);
             cli.close();
             resolve();
         });
