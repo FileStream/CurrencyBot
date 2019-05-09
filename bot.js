@@ -113,7 +113,7 @@ function display(value) { //Convert BigInts to readable strings
     return value.toLocaleString("en-US");
 }
 
-function Transaction(amount, transactionType, user) {
+function Transaction(amount, transactionType, user = undefined) {
     this.amount = amount; //Amount of money used in transaction
     this.type = transactionType; //Type of transaction
     this.userID = (user != undefined ? user.id : undefined); //Set userID for later use, some transactions don't need this which is why user is an optional parameter
@@ -129,12 +129,12 @@ function Transaction(amount, transactionType, user) {
         }
 
         if (transactionType == transactionTypes.WITHDRAW) {
-            var balance = BigInt(Bank.storage[userID].balance);
+            var balance = BigInt(Bank.storage[this.userID].balance);
             if (amount > balance) { //If user withdraws more than they have in their bank balance
                 amount = (amount > balance * BigInt(user.credit) ? balance * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
                 user.debt = (BigInt(user.debt) + (amount - BigInt(user.money))).toString();
             }
-            Bank.storage[userID].balance = (0 > balance - amount ? "0" : (balance - amount).toString()) //Minimum balance in bank is 0, debt is stored seperately
+            Bank.storage[this.userID].balance = (0 > balance - amount ? "0" : (balance - amount).toString()) //Minimum balance in bank is 0, debt is stored seperately
             user.money = (BigInt(user.money) + amount).toString();
         }
 
@@ -145,7 +145,7 @@ function Transaction(amount, transactionType, user) {
                 user.debt = (BigInt(user.debt) - toRemove).toString();
             }
             user.money = (BigInt(user.money) - amount).toString();
-            Bank.storage[userID].balance = (amount - toRemove).toString(); //New balance is whatever part of the deposit wasn't used for paying off debt
+            Bank.storage[this.userID].balance = (amount - toRemove).toString(); //New balance is whatever part of the deposit wasn't used for paying off debt
         }
     }
 }
