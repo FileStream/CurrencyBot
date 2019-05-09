@@ -193,11 +193,20 @@ function deposit(sender, amount) {
 function withdraw(asker, amount) {
     return new Promise((res, rej) => {
         amount = BigInt(amount);
+        oldDebt = BigInt(asker.debt);
+        oldMoney = BigInt(asker.money);
         var t = new Transaction(amount, transactionTypes.WITHDRAW, asker);
         asker.transactions.push(t);
         Bank.transactions.push(t);
-    //    if (sender.debt == 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
-    res(`Succesfully deposited $${display(amount)}`);
+        if (oldDebt < BigInt(asker.debt)) {//If user gained debt, notify them that they overdrew
+
+            if (oldMoney + amount == BigInt(akser.money)) //If user overdrew without hitting limit
+                res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
+            else //If user hit overdraw limit
+                res(`Only $${display(amount)} was able to be withdrawn from your bank account because your overdraw limit was hit. Due to the overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraw by improving your credit.**`);
+        }
+            else //If user didn't gain any debt
+    res(`Succesfully withdrew $${display(amount)} from your bank account.`);
     });
 }
 
@@ -292,6 +301,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         var cmd = args[0];
         var guild = bot.servers[bot.channels[channelID].guild_id];
         var currentUser = bot.users[userID];
+        var data = userData[userID];
         args = args.splice(0);
 
         try { //Catch any command errors
@@ -306,10 +316,32 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
                     });
                     break;
+                case 'widthdraw':
+                case 'w':
+                    (async function () {
+                        withdraw(currentUser, args[1]).then(msg =>
+                            bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
+                                bot.sendMessage({ to: channelID, message: msg }));
+                    })();
+                    break;
+                case 'deposit':
+                case 'd':
+                    (async function () {
+                        deposit(data, args[1]).then(msg =>
+                            bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
+                                bot.sendMessage({ to: channelID, message: msg }));
+                    })();
+                    break;
+                case 'send':
+                case 's':
+                    (async function () {
+                        send(userData[userID], userData[args[1].match(/\d+/)[0]], args[2], serverData[guild.id]).then(msg =>
+                            bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
+                                bot.sendMessage({ to: channelID, message: msg }));
+                    })();
+                    break;
                 case 'info':
-
-                    var data = userData[userID];
-
+                case 'i':
                     bot.sendMessage({
                         "to": channelID,
                         "embed": {
@@ -355,13 +387,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             ]
                         }
                     });
-                    break;
-                case 'send':
-                    (async function () {
-                        send(userData[userID], userData[args[1]], args[2], serverData[guild.id]).then(msg =>
-                            bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
-                                bot.sendMessage({ to: channelID, message: msg }));
-                    })();
                     break;
                 case 'echo':
                     if (args[1] == 'id' && userID != creator_id) {
