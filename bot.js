@@ -68,7 +68,7 @@ function pushDB(col, sender, doWipe = true) {
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
 
                 try {
-                    if (col == "bankdata") console.log(Object.values(sender));
+                    if (col == "bankdata") console.log(JSON.stringify(Object.values(sender)));
                     await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
                 }
                 catch (error) {
