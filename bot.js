@@ -68,7 +68,7 @@ function pushDB(col, sender, doWipe = true) {
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
 
                 try {
-                        await collection.insert(sender).catch((res) => reject("Failed insertion: " + res.message));
+                    await collection.insertMany(Object.entries(sender)).catch((res) => reject("Failed insertion: " + res.message));
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
