@@ -131,7 +131,7 @@ function Transaction(amount, transactionType, user = undefined) {
         if (transactionType == transactionTypes.WITHDRAW) {
             var balance = BigInt(Bank.storage[userID].balance);
             if (amount > balance) { //If user withdraws more than they have in their bank balance
-                amount = (amount > balance * BigInt(user.credit) ? getBankBalance(user) * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
+                amount = (amount > balance * BigInt(user.credit) ? balance * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
                 user.debt = (BigInt(user.debt) + (amount - BigInt(user.money))).toString();
             }
             Bank.storage[userID].balance = (0 > balance - amount ? "0" : (balance - amount).toString()) //Minimum balance in bank is 0, debt is stored seperately
