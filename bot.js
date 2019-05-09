@@ -110,7 +110,7 @@ var Bank = {
 };
 
 function display(value) { //Convert BigInts to readable strings
-    return value.toLocaleString("en-US");
+    return BigInt(value).toLocaleString("en-US");
 }
 
 function Transaction(amount, transactionType, user = undefined) {
@@ -132,7 +132,7 @@ function Transaction(amount, transactionType, user = undefined) {
             var balance = BigInt(Bank.storage[this.userID].balance);
             if (amount > balance) { //If user withdraws more than they have in their bank balance
                 amount = (amount > balance * BigInt(user.credit) ? balance * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
-                user.debt = (BigInt(user.debt) + (amount - BigInt(user.money) - balance)).toString();
+                user.debt = (BigInt(user.debt) + (amount - balance)).toString();
             }
             Bank.storage[this.userID].balance = (0 > balance - amount ? "0" : (balance - amount).toString()) //Minimum balance in bank is 0, debt is stored seperately
             user.money = (BigInt(user.money) + amount).toString();
@@ -185,7 +185,7 @@ function deposit(sender, amount) {
         var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
         sender.transactions.push(t);
         Bank.transactions.push(t);
-        if (sender.debt == 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
+        if (originalDebt = 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
         else res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
     });
 }
