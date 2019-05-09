@@ -68,6 +68,9 @@ function pushDB(col, sender, doWipe = true) {
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
 
                 try {
+                    if (Array.isArray(Object.values(sender)))
+                        await collection.insert(sender).catch((res) => reject("Failed insertion: " + res.message));
+                    else
                     await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
                 }
                 catch (error) {
@@ -96,12 +99,10 @@ function depositBox(userID) {
     this.balance = "0";
 }
 
-function BankObject() {
-    this.storage = {}, //Stores userIDs and their respective amount of money in the bank
-    this.transactions = [] //Stores all deposit / withdraw logs from the bank
-}
-
-var Bank = new BankObject();
+var Bank = {
+    storage: { }, //Stores userIDs and their respective amount of money in the bank
+    transactions: [] //Stores all deposit / withdraw logs from the bank
+};
 
 function display(value) { //Convert BigInts to readable strings
     return value.toLocaleString("en-US");
