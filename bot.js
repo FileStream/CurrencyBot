@@ -41,7 +41,7 @@ function pullDB(col, receiver, isCollection = true) {
                    for (var r of result) {
                        try {
                            if (isCollection) {
-                               for (p in receiver)
+                               for (p in receiver[r.id])
                                    if (r[p] != undefined) receiver[r.id][p] = r[p];
                            }
                            else {
