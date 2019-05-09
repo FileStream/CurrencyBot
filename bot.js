@@ -68,7 +68,6 @@ function pushDB(col, sender, doWipe = true) {
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
 
                 try {
-                    if (col == "bankdata") console.log(JSON.stringify(Object.values(sender)));
                     await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
                 }
                 catch (error) {
@@ -232,7 +231,7 @@ bot.on('ready', async function (evt) {
     await pullDB("bankstorage", Bank.storage).catch((res) => {
         console.log("BANKSTORAGE FAILURE: " + res);
     });
-    await pullDB("banktransactions", Bank.transactions).catch((res) => {
+    await pullDB("banktransactions", Bank.transactions.entries()).catch((res) => {
         console.log("BANKTRANSACTIONS FAILURE: " + res);
     });
 
@@ -253,7 +252,7 @@ bot.on('ready', async function (evt) {
         await pushDB("bankstorage", Bank.storage).catch((res) => {
             console.log("BANKSTORAGE FAILURE: " + res);
         });
-        await pushDB("banktransactions", Bank.transactions).catch((res) => {
+        await pushDB("banktransactions", Bank.transactions.entries()).catch((res) => {
             console.log("BANKTRANSACTIONS FAILURE: " + res);
         });
         console.log("Data sent.");
@@ -474,7 +473,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         await pushDB("bankstorage", Bank.storage).catch((res) => {
                             console.log("BANKSTORAGE FAILURE: " + res);
                         });
-                        await pushDB("banktransactions", Bank.transactions).catch((res) => {
+                        await pushDB("banktransactions", Bank.transactions.entries()).catch((res) => {
                             console.log("BANKTRANSACTIONS FAILURE: " + res);
                         });
                         bot.sendMessage({ to: channelID, message: "Sent data to database." });
@@ -492,7 +491,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         await pullDB("bankstorage", Bank.storage).catch((res) => {
                             console.log("BANKSTORAGE FAILURE: " + res);
                         });
-                        await pullDB("banktransactions", Bank.transactions).catch((res) => {
+                        await pullDB("banktransactions", Bank.transactions.entries()).catch((res) => {
                             console.log("BANKTRANSACTIONS FAILURE: " + res);
                         });
                         bot.sendMessage({ to: channelID, message: "Retrieved data from database." });
