@@ -40,12 +40,14 @@ function pullDB(col, receiver) {
                    }
                    for (var r of result) {
                        try {
-                           if (r.id)
-                           for (p in receiver[r.id])
-                               if (r[p] != undefined) receiver[r.id][p] = r[p];
-                                   else
-                                   for (p in receiver)
+                           if (r.id) {
+                               for (p in receiver[r.id])
+                                   if (r[p] != undefined) receiver[r.id][p] = r[p];
+                           }
+                           else {
+                               for (p in receiver)
                                    if (r[p] != undefined) receiver[p] = r[p];
+                           }
                        }
                        catch (error) {
                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
