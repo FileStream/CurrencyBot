@@ -28,7 +28,7 @@ var bot = new Discord.Client({
 //MongoDB stuff
 const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mongodb.net/test"; //Database URI
 
-function pullDB(col, receiver) {
+function pullDB(col, receiver, isCollection = true) {
     return new Promise((resolve, reject) => {
        MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
@@ -40,8 +40,14 @@ function pullDB(col, receiver) {
                    }
                    for (var r of result) {
                        try {
+                           if (isCollection) {
+                               for (p in receiver)
+                                   if (r[p] != undefined) receiver[r.id][p] = r[p];
+                           }
+                           else {
                                for (p in receiver)
                                    if (r[p] != undefined) receiver[p] = r[p];
+                           }
                        }
                        catch (error) {
                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
@@ -54,7 +60,7 @@ function pullDB(col, receiver) {
     });
 }
 
-function pushDB(col, sender, doWipe = true) {
+function pushDB(col, sender, isCollection = true) {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, {
             useNewUrlParser: true
@@ -64,10 +70,13 @@ function pushDB(col, sender, doWipe = true) {
                 reject();
             }
             var collection = cli.db("datastore").collection(col);
-                if (doWipe)
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
                 try {
-                    await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
+                    if (isCollection)
+                        await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
+                    else {
+                        await collection.insert(sender).catch((res) => reject("Failed insertion: " + res.message));
+                    }
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
@@ -227,7 +236,7 @@ bot.on('ready', async function (evt) {
     await pullDB("serverdata", serverData).catch((res) => {
         console.log("SERVERDATA FAILURE: " + res);
     });
-    await pullDB("bankdata", Bank).catch((res) => {
+    await pullDB("bankdata", Bank, false).catch((res) => {
         console.log("BANKDATA FAILURE: " + res);
     });
 
@@ -245,7 +254,7 @@ bot.on('ready', async function (evt) {
         await pushDB("serverdata", serverData).catch((res) => {
             console.log("SERVERDATA FAILURE: " + res);
         });
-        await pushDB("bankdata", Bank).catch((res) => {
+        await pushDB("bankdata", Bank, false).catch((res) => {
             console.log("BANKDATA FAILURE: " + res);
         });
         console.log("Data sent.");
@@ -463,7 +472,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         await pushDB("serverdata", serverData).catch((res) => {
                             console.log("SERVERDATA FAILURE: " + res);
                         });
-                        await pushDB("bankdata", Bank).catch((res) => {
+                        await pushDB("bankdata", Bank, false).catch((res) => {
                             console.log("BANKDATA FAILURE: " + res);
                         });
                         bot.sendMessage({ to: channelID, message: "Sent data to database." });
@@ -474,7 +483,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         if (userID != creator_id) return;
                         await pullDB("userdata", userData).catch((res) => {
                             console.log("USERDATA FAILURE: " + res);
-                        });;
+                        });
+                        await pullDB("serverdata", serverData).catch((res) => {
+                            console.log("SERVERDATA FAILURE: " + res);
+                        });
+                        await pullDB("bankdata", Bank, false).catch((res) => {
+                            console.log("BANKDATA FAILURE: " + res);
+                        });
                         bot.sendMessage({ to: channelID, message: "Retrieved data from database." });
                     })();
                     break;
