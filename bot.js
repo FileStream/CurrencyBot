@@ -93,7 +93,7 @@ const transactionTypes = {
 
 function depositBox(userID) {
     this.id = userID;
-    this.balance = 0n;
+    this.balance = "0";
 }
 
 var Bank = {
@@ -113,54 +113,55 @@ function Transaction(amount, transactionType, user = undefined) {
     if (user != undefined) { //Perform tasks on the user the transaction originated from
 
         if (transactionType == transactionTypes.SEND) {
-            user.money -= amount;
+            user.money = (BigInt(user.money) - amount).toString();
         }
 
         if (transactionType == transactionTypes.RECEIVE) {
-            user.money += amount;
+            user.money = (BigInt(user.money) + amount).toString();
         }
 
         if (transactionType == transactionTypes.WITHDRAW) {
-            var balance = Bank.storage[userID].balance;
+            var balance = BigInt(Bank.storage[userID].balance);
             if (amount > balance) { //If user withdraws more than they have in their bank balance
-                amount = (amount > balance * user.credit ? getBankBalance(user) * user.credit : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
-                user.debt += amount - user.money;
+                amount = (amount > balance * BigInt(user.credit) ? getBankBalance(user) * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
+                user.debt = (BigInt(user.debt) + (amount - BigInt(user.money))).toString();
             }
-            Bank.storage[userID].balance = (0 > balance-amount ? 0 : balance-amount) //Minimum balance in bank is 0, debt is stored seperately
-            user.money += amount;
+            Bank.storage[userID].balance = (0 > balance - amount ? "0" : (balance - amount).toString()) //Minimum balance in bank is 0, debt is stored seperately
+            user.money = (BigInt(user.money) + amount).toString();
         }
 
         if (transactionType == transactionTypes.DEPOSIT) { //If user is depositing and they have debt, automatically pay off their debt with the deposit.
             var toRemove = 0n;
-            if (user.debt > 0) { //If user has debt
-                toRemove = (user.debt > amount ? amount : user.debt); //Pay off debt up to the total amount deposited
-                user.debt -= toRemove;
+            if (BigInt(user.debt) > 0) { //If user has debt
+                toRemove = (BigInt(user.debt) > amount ? amount : BigInt(user.debt)); //Pay off debt up to the total amount deposited
+                user.debt = (BigInt(user.debt) - toRemove).toString();
             }
-            user.money -= amount;
-            Bank.storage[userID].balance = amount - toRemove; //New balance is whatever part of the deposit wasn't used for paying off debt
+            user.money = (BigInt(user.money) - amount).toString();
+            Bank.storage[userID].balance = (amount - toRemove).toString(); //New balance is whatever part of the deposit wasn't used for paying off debt
         }
     }
 }
 
 function User(userID) {
     this.id = userID;
-    this.money = 0n;
+    this.money = "0";
     this.transactions = [];
-    this.debt = 0n;
-    this.credit = 3n;
+    this.debt = "0";
+    this.credit = "3";
 }
 
 function Server(serverID, pref = "x!") {
     this.prefix = pref;
     this.id = serverID;
     this.transactions = [];
-    this.stockMultiplier = 1n;
+    this.stockMultiplier = "1";
     this.stocks = {}; //Stores stocks - userID of stockholder and initial deposit amount
 }
 
 function send(sender, receiver, amount, server) {
     return new Promise((res, rej) => {
-        if (sender.money < amount) rej("You cannot send more money than you have in your balance!");
+        amount = BigInt(amount);
+        if (BigInt(sender.money) < amount) rej("You cannot send more money than you have in your balance!");
         sender.transactions.push(new Transaction(amount, transactionTypes.SEND, sender));
         receiver.transactions.push(new Transaction(amount, transactionTypes.RECEIVE, receiver));
         server.transactions.push(new Transaction(amount, transactionTypes.TRANSFER));
@@ -170,7 +171,8 @@ function send(sender, receiver, amount, server) {
 
 function deposit(sender, amount) {
     return new Promise((res, rej) => {
-        if (sender.money < amount) rej("You cannot deposit more money than you have in your balance!");
+        amount = BigInt(amount);
+        if (BigInt(sender.money) < amount) rej("You cannot deposit more money than you have in your balance!");
         var originalDebt = BigInt(sender.debt);
         var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
         sender.transactions.push(t);
@@ -182,6 +184,7 @@ function deposit(sender, amount) {
 
 function withdraw(asker, amount) {
     return new Promise((res, rej) => {
+        amount = BigInt(amount);
         var t = new Transaction(amount, transactionTypes.WITHDRAW, asker);
         asker.transactions.push(t);
         Bank.transactions.push(t);
@@ -191,14 +194,15 @@ function withdraw(asker, amount) {
 }
 
 function getBankInterest() {
-    var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return total + cur });
-    var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return total + cur });
-    if (deposited = 0) return 0.1;
-    else return (withdrawn / deposited > 0.1 ? withdrawn / deposited : 0.1);
+    var total = 0n;
+    var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) });
+    var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) });
+    if (deposited = 0n) return 1;
+    else return (withdrawn / deposited > 1 ? (withdrawn / deposited).toString() : "1");
 }
 
 function getNetWorth(user) {
-    return user.money + Bank.storage[user.id].balance - user.debt;
+    return BigInt(user.money) + BigInt(Bank.storage[user.id].balance) - BigInt(user.debt);
 }
 
 
