@@ -316,10 +316,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
                     });
                     break;
-                case 'widthdraw':
+                case 'withdraw':
                 case 'w':
                     (async function () {
-                        withdraw(currentUser, args[1]).then(msg =>
+                        withdraw(data, args[1]).then(msg =>
                             bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
                                 bot.sendMessage({ to: channelID, message: msg }));
                     })();
@@ -335,7 +335,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 case 'send':
                 case 's':
                     (async function () {
-                        send(userData[userID], userData[args[1].match(/\d+/)[0]], args[2], serverData[guild.id]).then(msg =>
+                        send(data, userData[args[1].match(/\d+/)[0]], args[2], serverData[guild.id]).then(msg =>
                             bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
                                 bot.sendMessage({ to: channelID, message: msg }));
                     })();
