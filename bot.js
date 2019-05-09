@@ -200,7 +200,7 @@ function withdraw(asker, amount) {
         Bank.transactions.push(t);
         if (oldDebt < BigInt(asker.debt)) {//If user gained debt, notify them that they overdrew
 
-            if (oldMoney + amount == BigInt(akser.money)) //If user overdrew without hitting limit
+            if (oldMoney + amount == BigInt(asker.money)) //If user overdrew without hitting limit
                 res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
             else //If user hit overdraw limit
                 res(`Only $${display(amount)} was able to be withdrawn from your bank account because your overdraw limit was hit. Due to the overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraw by improving your credit.**`);
