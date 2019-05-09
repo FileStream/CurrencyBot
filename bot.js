@@ -40,14 +40,8 @@ function pullDB(col, receiver) {
                    }
                    for (var r of result) {
                        try {
-                           if (r.id) {
-                               for (p in receiver[r.id])
-                                   if (r[p] != undefined) receiver[r.id][p] = r[p];
-                           }
-                           else {
                                for (p in receiver)
                                    if (r[p] != undefined) receiver[p] = r[p];
-                           }
                        }
                        catch (error) {
                            console.log("ERROR ON DB PULL: " + JSON.stringify(error));
@@ -74,10 +68,7 @@ function pushDB(col, sender, doWipe = true) {
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
 
                 try {
-                    if (Array.isArray(Object.values(sender)))
                         await collection.insert(sender).catch((res) => reject("Failed insertion: " + res.message));
-                    else
-                    await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
