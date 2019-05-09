@@ -145,7 +145,7 @@ function Transaction(amount, transactionType, user = undefined) {
                 user.debt = (BigInt(user.debt) - toRemove).toString();
             }
             user.money = (BigInt(user.money) - amount).toString();
-            Bank.storage[this.userID].balance = (Bank.storage[this.userID].balance + amount - toRemove).toString(); //New balance is whatever part of the deposit wasn't used for paying off debt
+            Bank.storage[this.userID].balance = (BigInt(Bank.storage[this.userID].balance) + amount - toRemove).toString(); //New balance is whatever part of the deposit wasn't used for paying off debt
         }
     }
 }
