@@ -98,7 +98,7 @@ function depositBox(userID) {
 
 var Bank = {
     storage: {}, //Stores userIDs and their respective amount of money in the bank
-    transactions: {} //Stores all deposit / withdraw logs from the bank
+    transactions: [] //Stores all deposit / withdraw logs from the bank
 }
 
 function display(value) { //Convert BigInts to readable strings
