@@ -464,6 +464,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         await pushDB("serverdata", serverData).catch((res) => {
                             console.log("SERVERDATA FAILURE: " + res);
                         });
+                        await pushDB("bankdata", Bank).catch((res) => {
+                            console.log("BANKDATA FAILURE: " + res);
+                        });
                         bot.sendMessage({ to: channelID, message: "Sent data to database." });
                     })();
                     break;
