@@ -1,4 +1,4 @@
-//Set global constants
+﻿//Set global constants
 var Discord = require('discord.io'); //Discord API
 var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
@@ -87,39 +87,118 @@ const transactionTypes = {
     RECEIVE: 2,
     TRANSFER: 3,
     DEPOSIT: 4,
-    WITHDRAW: 5
+    WITHDRAW: 5,
+    BUY: 6
 };
 
-function Transaction(amount, transactionType, options = {}) {
-    this.amount = amount;
-    this.type = transactionType;
-    this.options = options;
+function depositBox(userID) {
+    this.id = userID;
+    this.balance = 0n;
+}
+
+var Bank = {
+    storage: {}, //Stores userIDs and their respective amount of money in the bank
+    transactions: {} //Stores all deposit / withdraw logs from the bank
+}
+
+function display(value) { //Convert BigInts to readable strings
+    return value.toLocaleString("en-US");
+}
+
+function Transaction(amount, transactionType, user = undefined) {
+    this.amount = amount; //Amount of money used in transaction
+    this.type = transactionType; //Type of transaction
+    this.userID = (user != undefined ? user.id : undefined); //Set userID for later use, some transactions don't need this which is why user is an optional parameter
+
+    if (user != undefined) { //Perform tasks on the user the transaction originated from
+
+        if (transactionType == transactionTypes.SEND) {
+            user.money -= amount;
+        }
+
+        if (transactionType == transactionTypes.RECEIVE) {
+            user.money += amount;
+        }
+
+        if (transactionType == transactionTypes.WITHDRAW) {
+            var balance = Bank.storage[userID].balance;
+            if (amount > balance) { //If user withdraws more than they have in their bank balance
+                amount = (amount > balance * user.credit ? getBankBalance(user) * user.credit : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
+                user.debt += amount - user.money;
+            }
+            Bank.storage[userID].balance = (0 > balance-amount ? 0 : balance-amount) //Minimum balance in bank is 0, debt is stored seperately
+            user.money += amount;
+        }
+
+        if (transactionType == transactionTypes.DEPOSIT) { //If user is depositing and they have debt, automatically pay off their debt with the deposit.
+            var toRemove = 0n;
+            if (user.debt > 0) { //If user has debt
+                toRemove = (user.debt > amount ? amount : user.debt); //Pay off debt up to the total amount deposited
+                user.debt -= toRemove;
+            }
+            user.money -= amount;
+            Bank.storage[userID].balance = amount - toRemove; //New balance is whatever part of the deposit wasn't used for paying off debt
+        }
+    }
 }
 
 function User(userID) {
     this.id = userID;
-    this.money = "0";
+    this.money = 0n;
     this.transactions = [];
+    this.debt = 0n;
+    this.credit = 3n;
 }
 
 function Server(serverID, pref = "x!") {
     this.prefix = pref;
     this.id = serverID;
     this.transactions = [];
+    this.stockMultiplier = 1n;
+    this.stocks = {}; //Stores stocks - userID of stockholder and initial deposit amount
 }
 
-function send(sender, receiver, amount) {
+function send(sender, receiver, amount, server) {
     return new Promise((res, rej) => {
-        amount = BigInt(amount);
-        var senderMoney = BigInt(sender.money);
-        var receiverMoney = BigInt(sender.money);
-        if (senderMoney < amount) rej("You cannot send more money than you have in your balance!");
-        sender.money = (senderMoney - amount).toString();
-        receiver.money = (receiverMoney + amount).toString();
-        sender.transactions.push(new Transaction(amount.toString(), transactionTypes.SEND));
-        receiver.transactions.push(new Transaction(amount.toString(), transactionTypes.RECEIVE));
-        res(`Succesfully transfered $${BigInt(amount).toLocaleString("en-US")} from your account to ${bot.users[receiver.id].username}'s account.`);
+        if (sender.money < amount) rej("You cannot send more money than you have in your balance!");
+        sender.transactions.push(new Transaction(amount, transactionTypes.SEND, sender));
+        receiver.transactions.push(new Transaction(amount, transactionTypes.RECEIVE, receiver));
+        server.transactions.push(new Transaction(amount, transactionTypes.TRANSFER));
+        res(`Succesfully transfered $${display(amount)} from your account to ${bot.users[receiver.id].username}'s account.`);
     });
+}
+
+function deposit(sender, amount) {
+    return new Promise((res, rej) => {
+        if (sender.money < amount) rej("You cannot deposit more money than you have in your balance!");
+        var originalDebt = BigInt(sender.debt);
+        var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
+        sender.transactions.push(t);
+        Bank.transactions.push(t);
+        if (sender.debt == 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
+        else res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
+    });
+}
+
+function withdraw(asker, amount) {
+    return new Promise((res, rej) => {
+        var t = new Transaction(amount, transactionTypes.WITHDRAW, asker);
+        asker.transactions.push(t);
+        Bank.transactions.push(t);
+    //    if (sender.debt == 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
+    res(`Succesfully deposited $${display(amount)}`);
+    });
+}
+
+function getBankInterest() {
+    var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return total + cur });
+    var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return total + cur });
+    if (deposited = 0) return 0.1;
+    else return (withdrawn / deposited > 0.1 ? withdrawn / deposited : 0.1);
+}
+
+function getNetWorth(user) {
+    return user.money + Bank.storage[user.id].balance - user.debt;
 }
 
 
@@ -132,6 +211,7 @@ bot.on('ready', async function (evt) {
     //Initialize data storage classes
         for (u in bot.users) {
             userData[u] = new User(u);
+            Bank.storage[u] = new depositBox(u);
         }
         for (s in bot.servers) {
             serverData[s] = new Server(s);
@@ -143,6 +223,9 @@ bot.on('ready', async function (evt) {
     });
     await pullDB("serverdata", serverData).catch((res) => {
         console.log("SERVERDATA FAILURE: " + res);
+    });
+    await pullDB("bankdata", Bank).catch((res) => {
+        console.log("BANKDATA FAILURE: " + res);
     });
 
     bot.setPresence({
@@ -158,6 +241,9 @@ bot.on('ready', async function (evt) {
         });
         await pushDB("serverdata", serverData).catch((res) => {
             console.log("SERVERDATA FAILURE: " + res);
+        });
+        await pushDB("bankdata", Bank).catch((res) => {
+            console.log("BANKDATA FAILURE: " + res);
         });
         console.log("Data sent.");
     }, 900000);
@@ -192,6 +278,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message.substring(0, pre.length) == pre) {
         var args = message.substring(pre.length).split(/ +/);
         var cmd = args[0];
+        var guild = bot.servers[bot.channels[channelID].guild_id];
+        var currentUser = bot.users[userID];
         args = args.splice(0);
 
         try { //Catch any command errors
@@ -206,9 +294,59 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         message: 'Pong! `' + (currentTime - msgTime) + ' ms`'
                     });
                     break;
+                case 'info':
+
+                    var data = userData[userID];
+
+                    bot.sendMessage({
+                        "to": channelID,
+                        "embed": {
+                            "color": Math.floor(Math.random() * 16777216),
+                            "thumbnail": {
+                                "url": "https://cdn.discordapp.com/avatars/575083138380726282/90f673d5585c7ae3c5083bde3293af23"
+                            },
+                            "author": {
+                                "name": `${currentUser.username}'s stats`,
+                                "icon_url": `https://cdn.discordapp.com/avatars/${userID}/${currentUser.avatar}`
+                            },
+                            "fields": [
+                                {
+                                    "name": "__Net worth__ 💰",
+                                    "value": `$${display(getNetWorth(data))}`,
+                                    "inline": true
+                                },
+                                {
+                                    "name": "Cash 💵",
+                                    "value": `$${display(data.money)}`,
+                                    "inline": true
+                                },
+                                {
+                                    "name": "Money in Bank 🏦",
+                                    "value": `$${display(Bank.storage[userID].balance)}`,
+                                    "inline": true
+                                },
+                                {
+                                    "name": "Value of Stocks 📈",
+                                    "value": "$0",
+                                    "inline": true
+                                },
+                                {
+                                    "name": "Credit 💳",
+                                    "value": `${display(data.credit)}`,
+                                    "inline": true
+                                },
+                                {
+                                    "name": "Debt 📉",
+                                    "value": `$${display(data.debt)}`,
+                                    "inline": true
+                                }
+                            ]
+                        }
+                    });
+                    break;
                 case 'send':
                     (async function () {
-                        send(userData[userID], userData[args[1]], args[2]).then(msg =>
+                        send(userData[userID], userData[args[1]], args[2], serverData[guild.id]).then(msg =>
                             bot.sendMessage({ to: channelID, message: msg })).catch(msg =>
                                 bot.sendMessage({ to: channelID, message: msg }));
                     })();
