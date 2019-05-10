@@ -216,35 +216,45 @@ function withdraw(asker, amount) {
 
 function getBankInterest() {
 
-    var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
-    var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
+    if (user.transactions != []) {
 
-    if (withdrawals != [])
-        var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
-    else var withdrawn = 0n;
+        var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
+        var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
 
-    if (deposits != [])
-        var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
-    else var deposited = 0n;
+        if (withdrawals != [])
+            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        else var withdrawn = 0n;
 
-    if (deposited == 0n) return 1;
-    else return (withdrawn / deposited > 2 ? (withdrawn / deposited).toString() : 2n);
+        if (deposits != [])
+            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        else var deposited = 0n;
+
+    } else return 1n;
+
+
+    if (deposited == 0n) return 1n;
+    else return (withdrawn / deposited > 2n ? (withdrawn / deposited).toString() : 2n);
 }
 
 function getDebtInterest(user) {
 
-    var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
-    var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
+    if (user.transactions != []) {
 
-    if (withdrawals != [])
-        var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
-    else var withdrawn = 0n;
+        var withdrawals = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
+        var deposits = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
 
-    if (deposits != [])
-        var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
-    else var deposited = 0n;
+        if (withdrawals != [])
+            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        else var withdrawn = 0n;
 
-    if (deposited == 0n) return 1;
+        if (deposits != [])
+            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        else var deposited = 0n;
+
+    }
+    else return 1n;
+
+    if (deposited == 0n) return 1n;
         else return (withdrawn / deposited > 1n ? (withdrawn / deposited).toString() : 1n);
 }
 
@@ -571,7 +581,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     break;
             }
         } catch (error) {
-            console.log("Command error: " + JSON.stringify(error));
+            console.log("Command error: " + error.message);
             bot.sendMessage({
                 to: channelID,
                 message: "There was an error running that command. :frowning:"
