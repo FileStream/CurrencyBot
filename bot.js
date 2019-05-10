@@ -215,15 +215,32 @@ function withdraw(asker, amount) {
 }
 
 function getBankInterest() {
-    var total = 0n;
-    var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) });
-    var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) });
-    if (deposited = 0n) return 1;
-    else return (withdrawn / deposited > 1 ? (withdrawn / deposited).toString() : "1");
+    var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+    var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+    if (deposited == 0n) return 1;
+    else return (withdrawn / deposited > 2 ? (withdrawn / deposited).toString() : "2");
+}
+
+function getDebtInterest(user) {
+        var withdrawn = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        var deposited = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        if (deposited == 0n) return 1;
+        else return (withdrawn / deposited > 1 ? (withdrawn / deposited).toString() : "1");
+}
+
+function updateStocks() {
+
 }
 
 function getNetWorth(user) {
     return BigInt(user.money) + BigInt(Bank.storage[user.id].balance) - BigInt(user.debt);
+}
+
+function compoundInterest() {
+    for (u of Object.values(userData)) {
+        u.debt = (bigInt(u.debt) + (BigInt(u.debt) * getDebtInterest(u))).toString();
+        Bank.storage[u.id].balance = (bigInt(Bank.storage[u.id].balance) + (bigInt(Bank.storage[u.id].balance) * getBankInterest())).toString();
+    }
 }
 
 
@@ -272,6 +289,8 @@ bot.on('ready', async function (evt) {
         });
         console.log("Data sent.");
     }, 900000);
+
+    setInterval(compoundInterest(), 86400000); //Compound interest daily
 
 });
 
@@ -391,6 +410,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             ]
                         }
                     });
+                    break;
+                case 'compound':
+                    compoundInterest();
                     break;
                 case 'echo':
                     if (args[1] == 'id' && userID != creator_id) {
