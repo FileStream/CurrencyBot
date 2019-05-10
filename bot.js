@@ -110,7 +110,7 @@ var Bank = {
 };
 
 function display(value) { //Convert BigInts to readable strings
-    return BigInt(value).toLocaleString("en-US");
+    return getCommas(BigInt(value));
 }
 
 function Transaction(amount, transactionType, user = undefined) {
@@ -645,11 +645,11 @@ function spliceSlice(str, index, add) {
     return str.slice(0, index) + (add || "") + str.slice(index, str.length - 1);
 }
 
-//function getCommas(x) {
-//    var parts = x.toString().split(".");
-//    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-//    return parts.join(".");
-//}
+function getCommas(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
 
 //BigInt.prototype.displayString = getCommas(this);
 
