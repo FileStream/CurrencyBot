@@ -4,7 +4,6 @@ var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
-var big = require('bigdecimal').bigdecimal;
 const creator_id = '175711685682659328';
 
 //Set global mutables
