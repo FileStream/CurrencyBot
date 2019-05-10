@@ -185,7 +185,7 @@ function deposit(sender, amount) {
         var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
         sender.transactions.push(t);
         Bank.transactions.push(t);
-        if (originalDebt = 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
+        if (originalDebt == 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
         else res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
     });
 }
