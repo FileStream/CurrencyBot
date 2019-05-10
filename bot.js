@@ -542,7 +542,7 @@ function deposit(sender, amount) {
         sender.transactions.push(t);
         Bank.transactions.push(t);
         if (originalDebt == 0) return res(`Succesfully deposited $${display(amount)} into the bank.`);
-        else return res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
+        else return res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt-BigInt(sender.debt))} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
     });
 }
 
