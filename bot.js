@@ -88,7 +88,7 @@ function pushDB(col, sender, isCollection = true) {
     });
 }
 
-//Define working objects
+//WORKING OBJECTS
 
 const transactionTypes = {
     SEND: 1,
@@ -108,10 +108,6 @@ var Bank = {
     storage: { }, //Stores userIDs and their respective amount of money in the bank
     transactions: [] //Stores all deposit / withdraw logs from the bank
 };
-
-function display(value) { //Convert BigInts to readable strings
-    return getCommas(BigInt(value));
-}
 
 function Transaction(amount, transactionType, user = undefined) {
     this.amount = amount.toString(); //Amount of money used in transaction
@@ -164,114 +160,6 @@ function Server(serverID, pref = "x!") {
     this.transactions = [];
     this.stockMultiplier = "1";
     this.stocks = {}; //Stores stocks - userID of stockholder and initial deposit amount
-}
-
-function send(sender, receiver, amount, server) {
-    return new Promise((res, rej) => {
-        amount = BigInt(amount);
-        if (sender.id == receiver.id) return rej("You cannot send money to yourself!");
-        if (BigInt(sender.money) < amount) return rej("You cannot send more money than you have in your balance!");
-        sender.transactions.push(new Transaction(amount, transactionTypes.SEND, sender));
-        receiver.transactions.push(new Transaction(amount, transactionTypes.RECEIVE, receiver));
-        server.transactions.push(new Transaction(amount, transactionTypes.TRANSFER));
-        return res(`Succesfully transfered $${display(amount)} from your account to ${bot.users[receiver.id].username}'s account.`);
-    });
-}
-
-function deposit(sender, amount) {
-    return new Promise((res, rej) => {
-        amount = BigInt(amount);
-        if (BigInt(sender.money) < amount) return rej("You cannot deposit more money than you have in your balance!");
-        var originalDebt = BigInt(sender.debt);
-        var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
-        sender.transactions.push(t);
-        Bank.transactions.push(t);
-        if (originalDebt == 0) return res(`Succesfully deposited $${display(amount)} into the bank.`);
-        else return res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
-    });
-}
-
-function withdraw(asker, amount) {
-    return new Promise((res, rej) => {
-        amount = BigInt(amount);
-        oldDebt = BigInt(asker.debt);
-        oldMoney = BigInt(asker.money);
-        oldBalance = BigInt(Bank.storage[asker.id].balance);
-        var t = new Transaction(amount, transactionTypes.WITHDRAW, asker);
-        asker.transactions.push(t);
-        Bank.transactions.push(t);
-        if (oldDebt < BigInt(asker.debt)) {//If user gained debt, notify them that they overdrew
-
-            if (oldMoney + amount == BigInt(asker.money)) //If user overdrew without hitting limit
-               return res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
-            else //If user hit overdraw limit
-               return res(`Only $${display(BigInt(asker.money) - oldMoney)} was able to be withdrawn from your bank account because your overdraft limit was hit. Due to the overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraft by improving your credit.**`);
-        }
-        else if (BigInt(asker.debt) == BigInt(asker.credit) * getNetWorth(asker)) { //User has already maxed out their overdraft
-            return res(`You have already hit your maximum overdraft, and cannot borrow any more money. **Your debt will continue to compound daily until paid off.**`);
-        }
-            else//If user didn't gain any debt
-    return res(`Succesfully withdrew $${display(amount)} from your bank account.`);
-    });
-}
-
-function getBankInterest() {
-
-    if (Bank.transactions != []) {
-
-        var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
-        var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
-
-        if (withdrawals != [])
-            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var withdrawn = 0n;
-
-        if (deposits != [])
-            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var deposited = 0n;
-
-    } else return 1n;
-
-
-    if (deposited == 0n) return 1n;
-    else return (withdrawn / deposited > 2n ? (withdrawn / deposited) : 2n);
-}
-
-function getDebtInterest(user) {
-
-    if (user.transactions != []) {
-
-        var withdrawals = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
-        var deposits = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
-
-        if (withdrawals != [])
-            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var withdrawn = 0n;
-
-        if (deposits != [])
-            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var deposited = 0n;
-
-    }
-    else return 1n;
-
-    if (deposited == 0n) return 1n;
-        else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
-}
-
-function updateStocks() {
-
-}
-
-function getNetWorth(user) {
-    return BigInt(user.money) + BigInt(Bank.storage[user.id].balance) - BigInt(user.debt);
-}
-
-function compoundInterest() {
-    for (u of Object.values(userData)) {
-        u.debt = (BigInt(u.debt) + (BigInt(u.debt) * getDebtInterest(u))).toString();
-        Bank.storage[u.id].balance = (BigInt(Bank.storage[u.id].balance) + (BigInt(Bank.storage[u.id].balance) * getBankInterest())).toString();
-    }
 }
 
 
@@ -625,6 +513,132 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         }
 
 });
+
+//ECONOMY FUNCTIONS
+
+
+function display(value) { //Convert BigInts to readable strings
+    return getCommas(BigInt(value));
+}
+
+function send(sender, receiver, amount, server) {
+    return new Promise((res, rej) => {
+        amount = BigInt(amount);
+        if (sender.id == receiver.id) return rej("You cannot send money to yourself!");
+        if (BigInt(sender.money) < amount) return rej("You cannot send more money than you have in your balance!");
+        sender.transactions.push(new Transaction(amount, transactionTypes.SEND, sender));
+        receiver.transactions.push(new Transaction(amount, transactionTypes.RECEIVE, receiver));
+        server.transactions.push(new Transaction(amount, transactionTypes.TRANSFER));
+        return res(`Succesfully transfered $${display(amount)} from your account to ${bot.users[receiver.id].username}'s account.`);
+    });
+}
+
+function deposit(sender, amount) {
+    return new Promise((res, rej) => {
+        amount = BigInt(amount);
+        if (BigInt(sender.money) < amount) return rej("You cannot deposit more money than you have in your balance!");
+        var originalDebt = BigInt(sender.debt);
+        var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
+        sender.transactions.push(t);
+        Bank.transactions.push(t);
+        if (originalDebt == 0) return res(`Succesfully deposited $${display(amount)} into the bank.`);
+        else return res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
+    });
+}
+
+function withdraw(asker, amount) {
+    return new Promise((res, rej) => {
+        amount = BigInt(amount);
+        oldDebt = BigInt(asker.debt);
+        oldMoney = BigInt(asker.money);
+        oldBalance = BigInt(Bank.storage[asker.id].balance);
+        var t = new Transaction(amount, transactionTypes.WITHDRAW, asker);
+        asker.transactions.push(t);
+        Bank.transactions.push(t);
+        if (oldDebt < BigInt(asker.debt)) {//If user gained debt, notify them that they overdrew
+
+            if (oldMoney + amount == BigInt(asker.money)) //If user overdrew without hitting limit
+                return res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
+            else //If user hit overdraw limit
+                return res(`Only $${display(BigInt(asker.money) - oldMoney)} was able to be withdrawn from your bank account because your overdraft limit was hit. Due to the overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraft by improving your credit.**`);
+        }
+        else if (BigInt(asker.debt) == BigInt(asker.credit) * getNetWorth(asker)) { //User has already maxed out their overdraft
+            return res(`You have already hit your maximum overdraft, and cannot borrow any more money. **Your debt will continue to compound daily until paid off.**`);
+        }
+        else//If user didn't gain any debt
+            return res(`Succesfully withdrew $${display(amount)} from your bank account.`);
+    });
+}
+
+function getBankInterest() {
+
+    if (Bank.transactions != []) {
+
+        var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
+        var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
+
+        if (withdrawals != [])
+            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var withdrawn = 0n;
+
+        if (deposits != [])
+            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var deposited = 0n;
+
+    } else return 1n;
+
+
+    if (deposited == 0n) return 1n;
+    else return (withdrawn / deposited > 2n ? (withdrawn / deposited) : 2n);
+}
+
+function getDebtInterest(user) {
+
+    if (user.transactions != []) {
+
+        var withdrawals = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
+        var deposits = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
+
+        if (withdrawals != [])
+            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var withdrawn = 0n;
+
+        if (deposits != [])
+            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var deposited = 0n;
+
+    }
+    else return 1n;
+
+    if (deposited == 0n) return 1n;
+    else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
+}
+
+function updateStocks() {
+
+}
+
+function getNetWorth(user) {
+    return BigInt(user.money) + BigInt(Bank.storage[user.id].balance) - BigInt(user.debt);
+}
+
+function compoundInterest() {
+    for (u of Object.values(userData)) {
+        u.debt = (BigInt(u.debt) + (BigInt(u.debt) * getDebtInterest(u))).toString();
+        Bank.storage[u.id].balance = (BigInt(Bank.storage[u.id].balance) + (BigInt(Bank.storage[u.id].balance) * getBankInterest())).toString();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+//GENERAL FUNCTIONS
 
 function sendError(channelID, err) {
     bot.sendMessage({
