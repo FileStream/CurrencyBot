@@ -233,7 +233,7 @@ function getBankInterest() {
 
 
     if (deposited == 0n) return 1n;
-    else return (withdrawn / deposited > 2n ? (withdrawn / deposited).toString() : 2n);
+    else return (withdrawn / deposited > 2n ? (withdrawn / deposited) : 2n);
 }
 
 function getDebtInterest(user) {
@@ -255,7 +255,7 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
-        else return (withdrawn / deposited > 1n ? (withdrawn / deposited).toString() : 1n);
+        else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
 }
 
 function updateStocks() {
