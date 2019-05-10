@@ -169,6 +169,7 @@ function Server(serverID, pref = "x!") {
 function send(sender, receiver, amount, server) {
     return new Promise((res, rej) => {
         amount = BigInt(amount);
+        if (sender.id == receiver.id) return rej("You cannot send money to yourself!");
         if (BigInt(sender.money) < amount) return rej("You cannot send more money than you have in your balance!");
         sender.transactions.push(new Transaction(amount, transactionTypes.SEND, sender));
         receiver.transactions.push(new Transaction(amount, transactionTypes.RECEIVE, receiver));
