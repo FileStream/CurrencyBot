@@ -220,11 +220,11 @@ function getBankInterest() {
     var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
 
     if (withdrawals != [])
-        var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
     else var withdrawn = 0n;
 
     if (deposits != [])
-    var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
     else var deposited = 0n;
 
     if (deposited == 0n) return 1;
@@ -237,11 +237,11 @@ function getDebtInterest(user) {
     var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
 
     if (withdrawals != [])
-        var withdrawn = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
     else var withdrawn = 0n;
 
     if (deposits != [])
-    var deposited = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
+        var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
     else var deposited = 0n;
 
     if (deposited == 0n) return 1;
