@@ -3,8 +3,8 @@ var Discord = require('discord.io'); //Discord API
 var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
-var creator_id = '175711685682659328';
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
+const creator_id = '175711685682659328';
 
 //Set global mutables
 var pageHolder = {};
@@ -30,32 +30,32 @@ const uri = "mongodb+srv://bin:" + process.env.MONGO_PASS + "@currency-swwe3.mon
 
 function pullDB(col, receiver, isCollection = true) {
     return new Promise((resolve, reject) => {
-       MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
+        MongoClient.connect(uri, { useNewUrlParser: true }, function (err, cli) {
             if (err)
                 console.log("MONGODB CONNECTION ERROR: " + err.message);
             var collection = cli.db("datastore").collection(col);
-               collection.find().toArray(function (er, result) {
-                   if (er) {
-                       console.log("TOARRAY ERROR: " + er.message);
-                   }
-                   for (var r of result) {
-                       try {
-                           if (isCollection) {
-                               for (p in receiver[r.id])
-                                   if (r[p] != undefined) receiver[r.id][p] = r[p];
-                           }
-                           else {
-                               for (p in receiver)
-                                   if (r[p] != undefined) receiver[p] = r[p];
-                           }
-                       }
-                       catch (error) {
-                           console.log("ERROR ON DB PULL: " + JSON.stringify(error));
-                       }
-                   }
-                   cli.close();
-                   resolve();
-           });
+            collection.find().toArray(function (er, result) {
+                if (er) {
+                    console.log("TOARRAY ERROR: " + er.message);
+                }
+                for (var r of result) {
+                    try {
+                        if (isCollection) {
+                            for (p in receiver[r.id])
+                                if (r[p] != undefined) receiver[r.id][p] = r[p];
+                        }
+                        else {
+                            for (p in receiver)
+                                if (r[p] != undefined) receiver[p] = r[p];
+                        }
+                    }
+                    catch (error) {
+                        console.log("ERROR ON DB PULL: " + JSON.stringify(error));
+                    }
+                }
+                cli.close();
+                resolve();
+            });
         });
     });
 }
@@ -65,25 +65,25 @@ function pushDB(col, sender, isCollection = true) {
         MongoClient.connect(uri, {
             useNewUrlParser: true
         }, async function (err, cli) {
-                if (err) {
-                    console.log("MONGODB CONNECTION ERROR: " + err.message);
+            if (err) {
+                console.log("MONGODB CONNECTION ERROR: " + err.message);
                 return reject();
             }
             var collection = cli.db("datastore").collection(col);
-                  collection.drop().catch((res) => reject("Failed drop: " + res.message));
-                try {
-                    if (isCollection)
-                        await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
-                    else {
-                        await collection.insert(sender).catch((res) => reject("Failed insertion: " + res.message));
-                    }
+            collection.drop().catch((res) => reject("Failed drop: " + res.message));
+            try {
+                if (isCollection)
+                    await collection.insertMany(Object.values(sender)).catch((res) => reject("Failed insertion: " + res.message));
+                else {
+                    await collection.insert(sender).catch((res) => reject("Failed insertion: " + res.message));
                 }
-                catch (error) {
-                    console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
-                    return reject();
-                }
-                resolve();
-                cli.close();
+            }
+            catch (error) {
+                console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
+                return reject();
+            }
+            resolve();
+            cli.close();
         });
     });
 }
@@ -105,7 +105,7 @@ function depositBox(userID) {
 }
 
 var Bank = {
-    storage: { }, //Stores userIDs and their respective amount of money in the bank
+    storage: {}, //Stores userIDs and their respective amount of money in the bank
     transactions: [] //Stores all deposit / withdraw logs from the bank
 };
 
@@ -170,13 +170,13 @@ bot.on('ready', async function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 
     //Initialize data storage classes
-        for (u in bot.users) {
-            userData[u] = new User(u);
-            Bank.storage[u] = new depositBox(u);
-        }
-        for (s in bot.servers) {
-            serverData[s] = new Server(s);
-        }
+    for (u in bot.users) {
+        userData[u] = new User(u);
+        Bank.storage[u] = new depositBox(u);
+    }
+    for (s in bot.servers) {
+        serverData[s] = new Server(s);
+    }
 
     //Pull values from database
     await pullDB("userdata", userData).catch((res) => {
@@ -475,42 +475,42 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 to: channelID,
                 message: "There was an error running that command. :frowning:"
             });
-            }
         }
+    }
     else if (message.includes('575083138380726282') && !userID.includes('575083138380726282')) {
-            var args = message.substring(2).split(' ');
-            var Sstring = args.slice(1).join(' ');
-            if (Sstring) {
-                cleverbot.setNick("yotsuba");
-                cleverbot.create(function (err, response) {
-                    cleverbot.ask(Sstring, function (err, response) {
-                        if (err)
-                            throw response;
-                        bot.sendMessage({
-                            to: channelID,
-                            message: response,
-                            typing: true
-                        });
+        var args = message.substring(2).split(' ');
+        var Sstring = args.slice(1).join(' ');
+        if (Sstring) {
+            cleverbot.setNick("yotsuba");
+            cleverbot.create(function (err, response) {
+                cleverbot.ask(Sstring, function (err, response) {
+                    if (err)
+                        throw response;
+                    bot.sendMessage({
+                        to: channelID,
+                        message: response,
+                        typing: true
                     });
                 });
-            }
+            });
         }
-        else if (channelID == '575112665983352835' && userID == '417093667778723840') {
-            if (message) {
-                if (Math.floor(Math.random() * 1000) == 999) bot.pinMessage({
-                    channelID: channelID,
-                    messageID: evt.d.id
+    }
+    else if (channelID == '575112665983352835' && userID == '417093667778723840') {
+        if (message) {
+            if (Math.floor(Math.random() * 1000) == 999) bot.pinMessage({
+                channelID: channelID,
+                messageID: evt.d.id
+            });
+            cleverbot.setNick("yotsuba");
+            cleverbot.create(function (err, response) {
+                cleverbot.ask(message, function (err, response) {
+                    if (err)
+                        throw response;
+                    bot.sendMessage({ to: channelID, message: response, typing: true });
                 });
-                cleverbot.setNick("yotsuba");
-                cleverbot.create(function (err, response) {
-                    cleverbot.ask(message, function (err, response) {
-                        if (err)
-                            throw response;
-                        bot.sendMessage({ to: channelID, message: response, typing: true });
-                    });
-                });
-            }
+            });
         }
+    }
 
 });
 
