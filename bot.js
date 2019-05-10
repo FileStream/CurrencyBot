@@ -131,7 +131,7 @@ function Transaction(amount, transactionType, user = undefined) {
         if (transactionType == transactionTypes.WITHDRAW) {
             var balance = BigInt(Bank.storage[this.userID].balance);
             if (amount > balance) { //If user withdraws more than they have in their bank balance
-                amount = (amount > (balance * BigInt(user.credit)) - BigInt(user.debt) ? ((balance * BigInt(user.credit)) - BigInt(user.debt)) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
+                amount = (amount > (getNetWorth(user) * BigInt(user.credit)) - BigInt(user.debt) ? ((getNetWorth(user) * BigInt(user.credit)) - BigInt(user.debt)) : amount); //Maximum overdraft is the user's credit score multiplied by their net worth
                 user.debt = (BigInt(user.debt) + (amount - balance)).toString();
             }
             Bank.storage[this.userID].balance = (0 > balance - amount ? "0" : ((balance - amount).toString())); //Minimum balance in bank is 0, debt is stored seperately
@@ -206,7 +206,7 @@ function withdraw(asker, amount) {
             else //If user hit overdraw limit
                 res(`Only $${display(amount)} was able to be withdrawn from your bank account because your overdraft limit was hit. Due to the overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraw by improving your credit.**`);
         }
-        else if (BigInt(asker.debt) == BigInt(asker.credit) * oldBalance) { //User has already maxed out their overdraft
+        else if (BigInt(asker.debt) == BigInt(asker.credit) * getNetWorth(asker)) { //User has already maxed out their overdraft
             res(`You have already hit your maximum overdraft, and cannot borrow any more money. **Your debt will continue to compound daily until paid off.**`);
         }
             else//If user didn't gain any debt
