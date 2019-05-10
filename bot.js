@@ -610,9 +610,9 @@ function getDebtInterest(user) {
         else var deposited = 0n;
 
     }
-    else return 1n;
+    else return new dec(1);
 
-    if (deposited == 0n) return 1n;
+    if (deposited == 0n) return new dec(1);
     else return (new dec(withdrawn / deposited) > new dec(1) ? new dec(withdrawn / deposited) : new dec(1));
 }
 
