@@ -4,6 +4,7 @@ var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
+var big = require('bigdecimal').bigdecimal;
 const creator_id = '175711685682659328';
 
 //Set global mutables
@@ -570,6 +571,7 @@ function withdraw(asker, amount) {
     });
 }
 
+<<<<<<< HEAD
 function getBankInterest() {
 
     if (Bank.transactions != []) {
@@ -611,6 +613,49 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
+=======
+function getBankInterest() {
+
+    if (Bank.transactions != []) {
+
+        var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
+        var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
+
+        if (withdrawals != [])
+            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var withdrawn = 0n;
+
+        if (deposits != [])
+            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var deposited = 0n;
+
+    } else return 1n;
+
+
+    if (deposited == 0n) return 1n;
+    else return (withdrawn / deposited > 2n ? (withdrawn / deposited) : 2n);
+}
+
+function getDebtInterest(user) {
+
+    if (user.transactions != []) {
+
+        var withdrawals = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
+        var deposits = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
+
+        if (withdrawals != [])
+            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var withdrawn = 0n;
+
+        if (deposits != [])
+            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
+        else var deposited = 0n;
+
+    }
+    else return 1n;
+
+    if (deposited == 0n) return 1n;
+>>>>>>> 8736ba5... organized code
     else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
 }
 
