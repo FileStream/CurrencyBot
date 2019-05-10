@@ -4,6 +4,8 @@ var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
+var dec = require('bigdecimal').BigDecimal;
+
 const creator_id = '175711685682659328';
 
 //Set global mutables
@@ -611,7 +613,7 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
-    else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
+    else return (dec(withdrawn / deposited) > dec(1) ? dec(withdrawn / deposited) : dec(1));
 }
 
 function updateStocks() {
@@ -625,16 +627,9 @@ function getNetWorth(user) {
 function compoundInterest() {
     for (u of Object.values(userData)) {
         u.debt = (BigInt(u.debt) + (BigInt(u.debt) * getDebtInterest(u))).toString();
-        Bank.storage[u.id].balance = (BigInt(Bank.storage[u.id].balance) + (BigInt(Bank.storage[u.id].balance) * getBankInterest())).toString();
+        Bank.storage[u.id].balance = (BigInt(Bank.storage[u.id].balance) + (getBankInterest().multiply(BigInt(Bank.storage[u.id].balance)))).toString();
     }
 }
-
-
-
-
-
-
-
 
 
 

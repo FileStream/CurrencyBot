@@ -5,10 +5,11 @@
   "main": "bot.js",
   "author": "Bin",
   "dependencies": {
-    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
-    "winston": "^2.4.0",
+    "bigdecimal": "^0.6.1",
     "biginteger": "^1.0.3",
+    "cleverbot.io": "^1.0.4",
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "mongodb": "^3.0.4",
-    "cleverbot.io": "^1.0.4"
+    "winston": "^2.4.0"
   }
 }
