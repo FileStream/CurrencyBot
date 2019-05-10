@@ -131,7 +131,7 @@ function Transaction(amount, transactionType, user = undefined) {
         if (transactionType == transactionTypes.WITHDRAW) {
             var balance = BigInt(Bank.storage[this.userID].balance);
             if (amount > balance) { //If user withdraws more than they have in their bank balance
-                amount = (amount > balance * BigInt(user.credit) ? balance * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
+                amount = (amount > (balance * BigInt(user.credit)) - BigInt(user.debt) ? ((balance * BigInt(user.credit)) - BigInt(user.debt)) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
                 user.debt = (BigInt(user.debt) + (amount - balance)).toString();
             }
             Bank.storage[this.userID].balance = (0 > balance - amount ? "0" : ((balance - amount).toString())); //Minimum balance in bank is 0, debt is stored seperately
@@ -195,17 +195,21 @@ function withdraw(asker, amount) {
         amount = BigInt(amount);
         oldDebt = BigInt(asker.debt);
         oldMoney = BigInt(asker.money);
+        oldBalance = BigInt(Bank.storage[asker.id].balance);
         var t = new Transaction(amount, transactionTypes.WITHDRAW, asker);
         asker.transactions.push(t);
         Bank.transactions.push(t);
         if (oldDebt < BigInt(asker.debt)) {//If user gained debt, notify them that they overdrew
 
             if (oldMoney + amount == BigInt(asker.money)) //If user overdrew without hitting limit
-                res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
+                res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
             else //If user hit overdraw limit
-                res(`Only $${display(amount)} was able to be withdrawn from your bank account because your overdraw limit was hit. Due to the overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraw by improving your credit.**`);
+                res(`Only $${display(amount)} was able to be withdrawn from your bank account because your overdraft limit was hit. Due to the overdraw, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraw by improving your credit.**`);
         }
-            else //If user didn't gain any debt
+        else if (BigInt(asker.debt) == BigInt(asker.credit) * oldBalance) { //User has already maxed out their overdraft
+            res(`You have already hit your maximum overdraft, and cannot borrow any more money. **Your debt will continue to compound daily until paid off.**`);
+        }
+            else//If user didn't gain any debt
     res(`Succesfully withdrew $${display(amount)} from your bank account.`);
     });
 }
