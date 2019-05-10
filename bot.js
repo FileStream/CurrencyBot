@@ -216,7 +216,7 @@ function withdraw(asker, amount) {
 
 function getBankInterest() {
 
-    if (user.transactions != []) {
+    if (Bank.transactions != []) {
 
         var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
         var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
