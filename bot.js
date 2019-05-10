@@ -218,14 +218,14 @@ function getBankInterest() {
     var withdrawn = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
     var deposited = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
     if (deposited == 0n) return 1;
-    else return (withdrawn / deposited > 2 ? (withdrawn / deposited).toString() : "2");
+    else return (withdrawn / deposited > 2 ? (withdrawn / deposited).toString() : 2n);
 }
 
 function getDebtInterest(user) {
         var withdrawn = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
         var deposited = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT).map(t => t.amount).reduce((total, cur) => { return BigInt(total) + cur });
         if (deposited == 0n) return 1;
-        else return (withdrawn / deposited > 1 ? (withdrawn / deposited).toString() : "1");
+        else return (withdrawn / deposited > 1n ? (withdrawn / deposited).toString() : 1n);
 }
 
 function updateStocks() {
