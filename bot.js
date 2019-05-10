@@ -613,7 +613,7 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
-    else return (dec(withdrawn / deposited) > dec(1) ? dec(withdrawn / deposited) : dec(1));
+    else return (new dec(withdrawn / deposited) > new dec(1) ? new dec(withdrawn / deposited) : new dec(1));
 }
 
 function updateStocks() {
