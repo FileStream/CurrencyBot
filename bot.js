@@ -3,6 +3,7 @@ var Discord = require('discord.io'); //Discord API
 var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
+var creator_id = '175711685682659328';
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
 
 //Set global mutables
