@@ -67,7 +67,7 @@ function pushDB(col, sender, isCollection = true) {
         }, async function (err, cli) {
                 if (err) {
                     console.log("MONGODB CONNECTION ERROR: " + err.message);
-                reject();
+                return reject();
             }
             var collection = cli.db("datastore").collection(col);
                   collection.drop().catch((res) => reject("Failed drop: " + res.message));
@@ -80,7 +80,7 @@ function pushDB(col, sender, isCollection = true) {
                 }
                 catch (error) {
                     console.log("ERROR ON DB PUSH: " + JSON.stringify(error));
-                    reject();
+                    return reject();
                 }
                 resolve();
                 cli.close();
@@ -169,24 +169,24 @@ function Server(serverID, pref = "x!") {
 function send(sender, receiver, amount, server) {
     return new Promise((res, rej) => {
         amount = BigInt(amount);
-        if (BigInt(sender.money) < amount) rej("You cannot send more money than you have in your balance!");
+        if (BigInt(sender.money) < amount) return rej("You cannot send more money than you have in your balance!");
         sender.transactions.push(new Transaction(amount, transactionTypes.SEND, sender));
         receiver.transactions.push(new Transaction(amount, transactionTypes.RECEIVE, receiver));
         server.transactions.push(new Transaction(amount, transactionTypes.TRANSFER));
-        res(`Succesfully transfered $${display(amount)} from your account to ${bot.users[receiver.id].username}'s account.`);
+        return res(`Succesfully transfered $${display(amount)} from your account to ${bot.users[receiver.id].username}'s account.`);
     });
 }
 
 function deposit(sender, amount) {
     return new Promise((res, rej) => {
         amount = BigInt(amount);
-        if (BigInt(sender.money) < amount) rej("You cannot deposit more money than you have in your balance!");
+        if (BigInt(sender.money) < amount) return rej("You cannot deposit more money than you have in your balance!");
         var originalDebt = BigInt(sender.debt);
         var t = new Transaction(amount, transactionTypes.DEPOSIT, sender);
         sender.transactions.push(t);
         Bank.transactions.push(t);
-        if (originalDebt == 0) res(`Succesfully deposited $${display(amount)} into the bank.`);
-        else res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
+        if (originalDebt == 0) return res(`Succesfully deposited $${display(amount)} into the bank.`);
+        else return res(`Succesfully deposited $${display(amount)} into the bank.\n$${display(originalDebt)} automatically went into paying off your debt.\nYour remaining debt is $${display(sender.debt)}.`);
     });
 }
 
@@ -202,15 +202,15 @@ function withdraw(asker, amount) {
         if (oldDebt < BigInt(asker.debt)) {//If user gained debt, notify them that they overdrew
 
             if (oldMoney + amount == BigInt(asker.money)) //If user overdrew without hitting limit
-                res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
+               return res(`Succesfully withdrew $${display(amount)} from your bank account. Due to an overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}.`);
             else //If user hit overdraw limit
-                res(`Only $${display(BigInt(asker.money) - oldMoney)} was able to be withdrawn from your bank account because your overdraft limit was hit. Due to the overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraft by improving your credit.**`);
+               return res(`Only $${display(BigInt(asker.money) - oldMoney)} was able to be withdrawn from your bank account because your overdraft limit was hit. Due to the overdraft, your debt has increased by $${BigInt(asker.debt) - oldDebt}. **You can increase your maximum overdraft by improving your credit.**`);
         }
         else if (BigInt(asker.debt) == BigInt(asker.credit) * getNetWorth(asker)) { //User has already maxed out their overdraft
-            res(`You have already hit your maximum overdraft, and cannot borrow any more money. **Your debt will continue to compound daily until paid off.**`);
+            return res(`You have already hit your maximum overdraft, and cannot borrow any more money. **Your debt will continue to compound daily until paid off.**`);
         }
             else//If user didn't gain any debt
-    res(`Succesfully withdrew $${display(amount)} from your bank account.`);
+    return res(`Succesfully withdrew $${display(amount)} from your bank account.`);
     });
 }
 
