@@ -134,7 +134,7 @@ function Transaction(amount, transactionType, user = undefined) {
                 amount = (amount > balance * BigInt(user.credit) ? balance * BigInt(user.credit) : amount); //Maximum overdraft is the user's credit score multiplied by their actual balance
                 user.debt = (BigInt(user.debt) + (amount - balance)).toString();
             }
-            Bank.storage[this.userID].balance = (0 > balance - amount ? "0" : (balance - amount).toString()) //Minimum balance in bank is 0, debt is stored seperately
+            Bank.storage[this.userID].balance = (0 > balance - amount ? "0" : ((balance - amount).toString())); //Minimum balance in bank is 0, debt is stored seperately
             user.money = (BigInt(user.money) + amount).toString();
         }
 
