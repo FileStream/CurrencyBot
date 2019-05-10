@@ -320,7 +320,7 @@ bot.on('ready', async function (evt) {
         console.log("Data sent.");
     }, 900000);
 
-    setInterval(compoundInterest(), 86400000); //Compound interest daily
+    setInterval(compoundInterest, 86400000); //Compound interest daily
 
 });
 
