@@ -626,8 +626,8 @@ function getNetWorth(user) {
 
 function compoundInterest() {
     for (u of Object.values(userData)) {
-        u.debt = (BigInt(u.debt) + (BigInt(u.debt) * getDebtInterest(u))).toString();
-        Bank.storage[u.id].balance = (BigInt(Bank.storage[u.id].balance) + (getBankInterest().multiply(BigInt(Bank.storage[u.id].balance)))).toString();
+        u.debt = (BigInt(u.debt) + (getDebtInterest(u).multiply(BigInt(u.debt)))).toString();
+        Bank.storage[u.id].balance = (BigInt(Bank.storage[u.id].balance) + (getBankInterest()*(BigInt(Bank.storage[u.id].balance)))).toString();
     }
 }
 
