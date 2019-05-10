@@ -412,6 +412,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     });
                     break;
                 case 'compound':
+                    if (userID != creator_id) break;
                     compoundInterest();
                     break;
                 case 'echo':
