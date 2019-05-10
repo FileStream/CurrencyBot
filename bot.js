@@ -114,7 +114,7 @@ function display(value) { //Convert BigInts to readable strings
 }
 
 function Transaction(amount, transactionType, user = undefined) {
-    this.amount = amount; //Amount of money used in transaction
+    this.amount = amount.toString(); //Amount of money used in transaction
     this.type = transactionType; //Type of transaction
     this.userID = (user != undefined ? user.id : undefined); //Set userID for later use, some transactions don't need this which is why user is an optional parameter
 
