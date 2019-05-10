@@ -4,8 +4,6 @@ var logger = require('winston');
 var MongoClient = require('mongodb').MongoClient; //Get database functions
 var cbot = require('cleverbot.io');
 var cleverbot = new cbot(process.env.CB_USER, process.env.CB_KEY);
-var big = require('bigdecimal').bigdecimal;
-const creator_id = '175711685682659328';
 
 //Set global mutables
 var pageHolder = {};
@@ -571,7 +569,6 @@ function withdraw(asker, amount) {
     });
 }
 
-<<<<<<< HEAD
 function getBankInterest() {
 
     if (Bank.transactions != []) {
@@ -613,7 +610,8 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
-=======
+}
+
 function getBankInterest() {
 
     if (Bank.transactions != []) {
@@ -655,7 +653,6 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
->>>>>>> 8736ba5... organized code
     else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
 }
 
