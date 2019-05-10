@@ -610,49 +610,6 @@ function getDebtInterest(user) {
     else return 1n;
 
     if (deposited == 0n) return 1n;
-}
-
-function getBankInterest() {
-
-    if (Bank.transactions != []) {
-
-        var withdrawals = Bank.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
-        var deposits = Bank.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
-
-        if (withdrawals != [])
-            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var withdrawn = 0n;
-
-        if (deposits != [])
-            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var deposited = 0n;
-
-    } else return 1n;
-
-
-    if (deposited == 0n) return 1n;
-    else return (withdrawn / deposited > 2n ? (withdrawn / deposited) : 2n);
-}
-
-function getDebtInterest(user) {
-
-    if (user.transactions != []) {
-
-        var withdrawals = user.transactions.filter(t => t.type == transactionTypes.WITHDRAW);
-        var deposits = user.transactions.filter(t => t.type == transactionTypes.DEPOSIT);
-
-        if (withdrawals != [])
-            var withdrawn = withdrawals.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var withdrawn = 0n;
-
-        if (deposits != [])
-            var deposited = deposits.map(t => t.amount).reduce((total, cur) => { return total + BigInt(cur) }, 0n);
-        else var deposited = 0n;
-
-    }
-    else return 1n;
-
-    if (deposited == 0n) return 1n;
     else return (withdrawn / deposited > 1n ? (withdrawn / deposited) : 1n);
 }
 
