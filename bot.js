@@ -403,6 +403,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         console.log("Server name: " + v.name, "Server id: " + v.id);
                     }
                     break;
+                case 'leaveserver':
+                bot.leaveServer(args[1]);
+                break;
                 case 'getvoice':
                     if (userID == creator_id) {
                         var target = bot.servers[bot.channels[channelID].guild_id];
