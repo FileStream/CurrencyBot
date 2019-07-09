@@ -241,7 +241,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message.substring(0, pre.length) == pre) {
         var args = message.substring(pre.length).split(/ +/);
         var cmd = args[0];
-        var guild = (channelID != userID) ? bot.servers[bot.channels[channelID].guild_id] : userID;
+        var guild = (bot.channels[channelID] != undefined) ? bot.servers[bot.channels[channelID].guild_id] : undefined;
         var currentUser = bot.users[userID];
         var data = userData[userID];
         args = args.splice(0);
